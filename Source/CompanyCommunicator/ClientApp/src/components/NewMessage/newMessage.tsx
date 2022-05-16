@@ -84,8 +84,14 @@ export interface formState {
     groupsOptionSelected: boolean,
     csvOptionSelected: boolean,
     csvLoaded: string,
+    csvLoadedTeams: string,
+    csvLoadedRosters: string,
     csvError: boolean,
+    csvErrorTeams: boolean,
+    csvErrorRosters: boolean,
     csvusers: string,
+    csvTeams: string,
+    csvRosters: string,
     teams?: any[],
     groups?: any[],
     exists?: boolean,
@@ -129,8 +135,10 @@ export interface INewMessageProps extends RouteComponentProps, WithTranslation {
 class NewMessage extends React.Component<INewMessageProps, formState> {
     readonly localize: TFunction;
     private card: any;
-    fileInput: any;
-    CSVfileInput: any;
+    fileInput: any; //property to host the upload box for the image file
+    CSVfileInput: any; //property to host the upload box for the user CSV file
+    CSVfileInputTeams: any; //property to host the upload box for the user Teams CSV file
+    CSVfileInputRosters: any; //property to host the upload box for the Rosters CSV file
     targetingEnabled: boolean; // property to store value indicating if the targeting mode is enabled or not
     masterAdminUpns: string; // property to store value with the master admins
     imageUploadBlobStorage: boolean; //property to store value indicating if the upload to blob storage is enabled or not
@@ -162,8 +170,14 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             groupsOptionSelected: false,
             csvOptionSelected: false,
             csvLoaded: "",
+            csvLoadedTeams: "",
+            csvLoadedRosters: "",
             csvError: false,
+            csvErrorTeams: false,
+            csvErrorRosters: false,
             csvusers: "",
+            csvTeams: "",
+            csvRosters: "",
             messageId: "",
             loader: true,
             groupAccess: false,
@@ -195,9 +209,13 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         }
         this.fileInput = React.createRef();
         this.CSVfileInput = React.createRef();
+        this.CSVfileInputTeams = React.createRef(); //reference to the file box to upload teams
+        this.CSVfileInputRosters = React.createRef(); //reference to the file box to upload rosters
         this.handleImageSelection = this.handleImageSelection.bind(this);
         this.handleCSVSelection = this.handleCSVSelection.bind(this);
-       
+        this.handleCSVSelectionTeams = this.handleCSVSelectionTeams.bind(this);
+        this.handleCSVSelectionRosters = this.handleCSVSelectionRosters.bind(this);
+
     }
 
     public async componentDidMount() {
@@ -210,13 +228,13 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
 
         //get the maximum number of teams that can receive a message
         let url = baseAxiosUrl + "/options";
-    
+
         try {
             var response = await axios.get(url);
-            this.setState({maxNumberOfTeams: response.data});
+            this.setState({ maxNumberOfTeams: response.data });
         }
         catch {
-            this.setState({maxNumberOfTeams: response.data})
+            this.setState({ maxNumberOfTeams: response.data })
         }
 
         // get teams context variables and store in the state
@@ -387,7 +405,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             //parses the CSV file using papa parse library
             Papa.parse(file, {
                 skipEmptyLines: true,
-                delimiter:"\t",
+                delimiter: "\t",
                 complete: ({ errors, data }) => {
 
                     if (errors.length > 0) {
@@ -422,6 +440,14 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         }
     }
 
+    private handleCSVSelectionTeams() {
+
+    }
+
+    private handleCSVSelectionRosters() {
+
+    }
+
     //Function calling a click event on a hidden file input
     private handleUploadClick = (event: any) => {
         //reset the error message and the image link as the upload will reset them potentially
@@ -432,7 +458,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         setCardImageLink(this.card, "");
         //fire the fileinput click event and run the handleimageselection function
         this.fileInput.current.click();
-    };
+    }
 
     //Function calling a click event on a hidden file input
     private handleCSVUploadClick = (event: any) => {
@@ -444,7 +470,30 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
 
         //fire the csvfileinput click event and run the handle the CSV function
         this.CSVfileInput.current.click();
-    };
+    }
+
+    private handleCSVUploadClickTeams = (event: any) => {
+        this.setState({
+            csvLoadedTeams: "",
+            csvErrorTeams: false,
+            csvTeams: ""
+        });
+
+        //fire the click event to handle the CSV upload for Teams
+        this.CSVfileInputTeams.current.click();
+    }
+
+    private handleCSVUploadClickRosters = (event: any) => {
+        this.setState({
+            csvLoadedRosters: "",
+            csvErrorRosters: false,
+            csvRosters: ""
+        });
+
+        //fire the click event to handle the CSV upload for Teams
+        this.CSVfileInputRosters.current.click();
+    }
+
 
     private makeDropdownItems = (items: any[] | undefined) => {
         const resultedTeams: dropdownItem[] = [];
@@ -793,10 +842,19 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                                         return (
                                                             <Flex key={name} column>
                                                                 <Component {...props} />
-                                                                <Flex className="selectTeamsContainer" gap="gap.small" hidden={!this.state.teamsOptionSelected}>
+                                                                <Flex className="selectTeamsContainer" gap="gap.small" hidden={!this.state.teamsOptionSelected} vAlign="center">
                                                                     <Button content={this.localize("SelectAll")} onClick={this.onSelectAllTeams} />
                                                                     <Button content={this.localize("UnselectAll")} onClick={this.onUnselectAllTeams} />
-                                                                </Flex>  
+                                                                    <Button circular onClick={this.handleCSVUploadClickTeams}
+                                                                        size="small"
+                                                                        icon={<FilesUploadIcon />}
+                                                                        title={this.localize("LabelCSV")}
+                                                                    />
+                                                                    <input type="file" accept="csv/"
+                                                                        style={{ display: 'none' }}
+                                                                        onChange={this.handleCSVSelectionTeams}
+                                                                        ref={this.CSVfileInputTeams} />
+                                                                </Flex>
                                                                 <Dropdown
                                                                     hidden={!this.state.teamsOptionSelected}
                                                                     placeholder={this.localize("SendToGeneralChannelPlaceHolder")}
@@ -822,9 +880,18 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                                         return (
                                                             <Flex key={name} column>
                                                                 <Component {...props} />
-                                                                <Flex className="selectTeamsContainer" gap="gap.small" hidden={!this.state.rostersOptionSelected}>
+                                                                <Flex className="selectTeamsContainer" gap="gap.small" hidden={!this.state.rostersOptionSelected} vAlign="center">
                                                                     <Button content={this.localize("SelectAll")} onClick={this.onSelectAllRosters} />
-                                                                    <Button content={this.localize("UnselectAll")} onClick={this.onUnselectAllRosters}  />
+                                                                    <Button content={this.localize("UnselectAll")} onClick={this.onUnselectAllRosters} />
+                                                                    <Button circular onClick={this.handleCSVUploadClickRosters}
+                                                                        size="small"
+                                                                        icon={<FilesUploadIcon />}
+                                                                        title={this.localize("LabelCSV")}
+                                                                    />
+                                                                    <input type="file" accept="csv/"
+                                                                        style={{ display: 'none' }}
+                                                                        onChange={this.handleCSVSelectionRosters}
+                                                                        ref={this.CSVfileInputRosters} />
                                                                 </Flex>
                                                                 <Dropdown
                                                                     hidden={!this.state.rostersOptionSelected}
@@ -1018,7 +1085,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                 <Flex.Item size="size.half">
                                     <div>
                                         <Flex hAlign="end">
-                                            <Label content={JSON.stringify(this.card).length -this.imageSize + "/" + maxCardSize} />
+                                            <Label content={JSON.stringify(this.card).length - this.imageSize + "/" + maxCardSize} />
                                         </Flex>
                                         <div className="adaptiveCardContainer">
                                         </div>
@@ -1061,7 +1128,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         if (this.targetingEnabled && !isMaster) {
             opName = "groups";
         }
-        
+
         this.setState({
             selectedRadioBtn: opName,
             teamsOptionSelected: opName === 'teams',
@@ -1223,10 +1290,10 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
     private onSelectAllTeams = () => {
         var teams = this.getItems();
         if (teams.length > this.state.maxNumberOfTeams) {
-            this.setState({ isMaxNumberOfTeamsError: true});
+            this.setState({ isMaxNumberOfTeamsError: true });
         }
         else {
-            this.setState({ isMaxNumberOfTeamsError: false});
+            this.setState({ isMaxNumberOfTeamsError: false });
         }
 
         this.setState({ selectedTeams: teams, selectedTeamsNum: teams.length });
@@ -1240,10 +1307,10 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
     private onSelectAllRosters = () => {
         var teams = this.getItems();
         if (teams.length > this.state.maxNumberOfTeams) {
-            this.setState({ isMaxNumberOfTeamsError: true});
+            this.setState({ isMaxNumberOfTeamsError: true });
         }
         else {
-            this.setState({ isMaxNumberOfTeamsError: false});
+            this.setState({ isMaxNumberOfTeamsError: false });
         }
 
         this.setState({ selectedRosters: teams, selectedRostersNum: teams.length });
@@ -1256,12 +1323,12 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
 
     private onTeamsChange = (event: any, itemsData: any) => {
         if (itemsData.value.length > this.state.maxNumberOfTeams) {
-            this.setState({isMaxNumberOfTeamsError: true});
+            this.setState({ isMaxNumberOfTeamsError: true });
         }
         else {
-            this.setState({isMaxNumberOfTeamsError:false});
+            this.setState({ isMaxNumberOfTeamsError: false });
         }
-        
+
         this.setState({
             selectedTeams: itemsData.value,
             selectedTeamsNum: itemsData.value.length,
@@ -1274,10 +1341,10 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
 
     private onRostersChange = (event: any, itemsData: any) => {
         if (itemsData.value.length > this.state.maxNumberOfTeams) {
-            this.setState({isMaxNumberOfTeamsError: true});
+            this.setState({ isMaxNumberOfTeamsError: true });
         }
         else {
-            this.setState({isMaxNumberOfTeamsError:false});
+            this.setState({ isMaxNumberOfTeamsError: false });
         }
 
         this.setState({

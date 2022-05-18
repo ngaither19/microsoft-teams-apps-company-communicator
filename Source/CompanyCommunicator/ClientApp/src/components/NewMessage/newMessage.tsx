@@ -394,12 +394,12 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
 
     //Function to handle the CSV File selection
     private handleCSVSelection() {
-        //get the first file sealected
+        //get the first file selected
         const file = this.CSVfileInput.current.files[0];
         //if we have a file
         if (file) {
             var cardsize = JSON.stringify(this.card).length;
-            if (this.imageUploadBlobStorage) {
+            if (this.imageUploadBlobStorage) { //if blob storage upload is enabled the imageSize can be ignored 
                 cardsize = cardsize - this.imageSize;
             }
             //parses the CSV file using papa parse library
@@ -441,11 +441,137 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
     }
 
     private handleCSVSelectionTeams() {
+        //get the first file selected
+        const file = this.CSVfileInputTeams.current.files[0];
+        //if we have a file
+        if (file) {
+            var cardsize = JSON.stringify(this.card).length;
+            //parses the CSV file using papa parse library
+            Papa.parse(file, {
+                skipEmptyLines: true,
+                delimiter: "\t",
+                complete: ({ errors, data }) => {
+                    if (errors.length > 0) {
+                        //file is invalid, show the message for the user
+                        this.setState({
+                            csvLoadedTeams: this.localize("CSVInvalid"),
+                            csvErrorTeams: true,
+                            selectedTeams: [],
+                            selectedTeamsNum: 0
+                        });
+                    }
+                    else {
+                        var csvfilesize = JSON.stringify(data).length;
+                        if ((cardsize + csvfilesize) < maxCardSize) {
+                            //logic to get teams from the CSV file and push into the selection box
+                            this.setState({ selectedTeams: [], selectedTeamsNum: 0 });
+                            var resultedTeams: dropdownItem[] = [];
 
+                            for (var i = 0; i < data.length; i++) {
+
+                                var found = this.state.teams.findIndex(function (value) {
+                                    return value.id == data[i];
+                                });
+
+                                if (found >= 0) {
+
+                                    resultedTeams.push({
+                                        key: this.state.teams[found].id,
+                                        header: this.state.teams[found].name,
+                                        content: this.state.teams[found].mail,
+                                        image: ImageUtil.makeInitialImage(this.state.teams[found].name),
+                                        team: {
+                                            id: this.state.teams[found].id
+                                        }
+                                    });
+                                }
+
+                                this.setState({ selectedTeams: resultedTeams, selectedTeamsNum: resultedTeams.length });
+                            }
+
+                        }
+                        else {
+                            //file is too big, show the message for the user
+                            var errorMessage = this.localize("CSVIsTooBig") + " " + (maxCardSize - cardsize) + " bytes.";
+                            this.setState({
+                                csvLoadedTeams: errorMessage,
+                                csvErrorTeams: true,
+                                csvTeams: "",
+                                selectedTeams: [],
+                                selectedTeamsNum: 0
+                            });
+                        }
+
+                    }
+                }
+            });
+        }
     }
 
     private handleCSVSelectionRosters() {
+        //get the first file selected
+        const file = this.CSVfileInputRosters.current.files[0];
+        //if we have a file
+        if (file) {
+            var cardsize = JSON.stringify(this.card).length;
+            //parses the CSV file using papa parse library
+            Papa.parse(file, {
+                skipEmptyLines: true,
+                delimiter: "\t",
+                complete: ({ errors, data }) => {
+                    if (errors.length > 0) {
+                        //file is invalid, show the message for the user
+                        this.setState({
+                            csvLoadedRosters: this.localize("CSVInvalid"),
+                            csvErrorRosters: true,
+                            selectedRosters: [],
+                            selectedRostersNum: 0
+                        });
+                    }
+                    else {
+                        var csvfilesize = JSON.stringify(data).length;
+                        if ((cardsize + csvfilesize) < maxCardSize) {
+                            //logic to get rosters from the CSV file and push into the selection box
+                            //TODO
+                            this.setState({ selectedRosters: [], selectedRostersNum: 0 });
+                            var resultedRosters: dropdownItem[] = [];
 
+                            for (var i = 0; i < data.length; i++) {
+
+                                var found = this.state.teams.findIndex(function (value) {
+                                    return value.id == data[i];
+                                });
+
+                                if (found >= 0) {
+
+                                    resultedRosters.push({
+                                        key: this.state.teams[found].id,
+                                        header: this.state.teams[found].name,
+                                        content: this.state.teams[found].mail,
+                                        image: ImageUtil.makeInitialImage(this.state.teams[found].name),
+                                        team: {
+                                            id: this.state.teams[found].id
+                                        }
+                                    });
+                                }
+
+                                this.setState({ selectedRosters: resultedRosters, selectedRostersNum: resultedRosters.length });
+                            }
+                        }
+                        else {
+                            //file is too big, show the message for the user
+                            var errorMessage = this.localize("CSVIsTooBig") + " " + (maxCardSize - cardsize) + " bytes.";
+                            this.setState({
+                                csvLoadedRosters: errorMessage,
+                                csvErrorRosters: true,
+                                selectedRosters: [],
+                                selectedRostersNum: 0
+                            });
+                        }
+                    }
+                }
+            });
+        }
     }
 
     //Function calling a click event on a hidden file input
@@ -476,7 +602,8 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         this.setState({
             csvLoadedTeams: "",
             csvErrorTeams: false,
-            csvTeams: ""
+            selectedTeams: [],
+            selectedTeamsNum: 0
         });
 
         //fire the click event to handle the CSV upload for Teams
@@ -826,6 +953,8 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                     <Flex column className="formContentContainer">
                                         <h3>{this.localize("SendHeadingText")}</h3>
                                         <Text content={this.localize("MaxTeamsError")} hidden={!this.state.isMaxNumberOfTeamsError} error />
+                                        <Text content={this.state.csvLoadedTeams} hidden={!this.state.csvErrorTeams} error />
+                                        <Text content={this.state.csvLoadedRosters} hidden={!this.state.csvErrorRosters} error />
                                         <RadioGroup
                                             className="radioBtns"
                                             checkedValue={this.state.selectedRadioBtn}

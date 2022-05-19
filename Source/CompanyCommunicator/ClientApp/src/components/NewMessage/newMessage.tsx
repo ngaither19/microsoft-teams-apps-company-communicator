@@ -487,6 +487,10 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                 }
 
                                 this.setState({ selectedTeams: resultedTeams, selectedTeamsNum: resultedTeams.length });
+
+                                if (resultedTeams.length > this.state.maxNumberOfTeams) {
+                                    this.setState({ isMaxNumberOfTeamsError: true });
+                                }
                             }
 
                         }
@@ -556,6 +560,10 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                 }
 
                                 this.setState({ selectedRosters: resultedRosters, selectedRostersNum: resultedRosters.length });
+
+                                if (resultedRosters.length > this.state.maxNumberOfTeams) {
+                                    this.setState({ isMaxNumberOfTeamsError: true });
+                                }
                             }
                         }
                         else {
@@ -1379,9 +1387,11 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         const groupsSelectionIsValid = (this.state.groupsOptionSelected && (this.state.selectedGroupsNum !== 0)) || (!this.state.groupsOptionSelected);
         const csvSelectionIsValid = (!(this.state.csvError) && (!(this.state.csvLoaded === "") && this.state.csvOptionSelected)) || (!this.state.csvOptionSelected);
         const nothingSelected = (!this.state.teamsOptionSelected) && (!this.state.rostersOptionSelected) && (!this.state.groupsOptionSelected) && (!this.state.allUsersOptionSelected) && (!this.state.csvOptionSelected);
+        const csvTeamsIsValid = (!(this.state.csvErrorTeams) && (!(this.state.csvLoadedTeams === "") && this.state.teamsOptionSelected))
+        const csvRostersIsValid = (!(this.state.csvErrorRosters) && (!(this.state.csvLoadedRosters === "") && this.state.rostersOptionSelected))
         const maxNumberOfTeams = this.state.isMaxNumberOfTeamsError;
 
-        return (!teamsSelectionIsValid || !rostersSelectionIsValid || !groupsSelectionIsValid || nothingSelected || !csvSelectionIsValid || maxNumberOfTeams);
+        return (!teamsSelectionIsValid || !rostersSelectionIsValid || !groupsSelectionIsValid || nothingSelected || !csvSelectionIsValid || maxNumberOfTeams || csvTeamsIsValid || csvRostersIsValid);
     }
 
     private isNextBtnDisabled = () => {

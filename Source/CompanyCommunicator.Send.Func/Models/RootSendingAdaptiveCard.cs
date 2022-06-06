@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AdaptiveCards;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -16,6 +17,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func.Models
         public string altText { get; set; }
         public string spacing { get; set; }
         public bool? isVisible { get; set; }
+        public MsTeams msTeams { get; set; }
     }
 
     public class Action
@@ -31,5 +33,10 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func.Models
         public string version { get; set; }
         public List<Body> body { get; set; }
         public List<Action> actions { get; set; }
+    }
+
+    public class MsTeams
+    {
+        public bool allowExpand { get; set; }
     }
 }

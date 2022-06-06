@@ -470,7 +470,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                             for (var i = 0; i < data.length; i++) {
 
                                 var found = this.state.teams.findIndex(function (value) {
-                                    return value.id == data[i];
+                                    return value.name == data[i];
                                 });
 
                                 if (found >= 0) {
@@ -543,7 +543,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                             for (var i = 0; i < data.length; i++) {
 
                                 var found = this.state.teams.findIndex(function (value) {
-                                    return value.id == data[i];
+                                    return value.name == data[i];
                                 });
 
                                 if (found >= 0) {

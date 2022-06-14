@@ -467,12 +467,16 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                             this.setState({ selectedTeams: [], selectedTeamsNum: 0 });
                             var resultedTeams: dropdownItem[] = [];
 
+                            //we need to process each line/record of the csv file
                             for (var i = 0; i < data.length; i++) {
 
+                                //let's check if the record on the CSV file is part of the list of teams with the bot installed
+                                //function is executed until it returns true according the documentation 
                                 var found = this.state.teams.findIndex(function (value) {
                                     return value.name == data[i];
                                 });
 
+                                //if we find the team on the list, let~s included in the the selection box
                                 if (found >= 0) {
 
                                     resultedTeams.push({
@@ -485,12 +489,15 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                         }
                                     });
                                 }
+                                
+                            }
 
-                                this.setState({ selectedTeams: resultedTeams, selectedTeamsNum: resultedTeams.length });
+                            //set state with the selecion box
+                            this.setState({ selectedTeams: resultedTeams, selectedTeamsNum: resultedTeams.length });
 
-                                if (resultedTeams.length > this.state.maxNumberOfTeams) {
-                                    this.setState({ isMaxNumberOfTeamsError: true });
-                                }
+                            //check if the number of teams is bigger than the maximum defined
+                            if (resultedTeams.length > this.state.maxNumberOfTeams) {
+                                this.setState({ isMaxNumberOfTeamsError: true });
                             }
 
                         }
@@ -535,8 +542,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                     else {
                         var csvfilesize = JSON.stringify(data).length;
                         if ((cardsize + csvfilesize) < maxCardSize) {
-                            //logic to get rosters from the CSV file and push into the selection box
-                            //TODO
+
                             this.setState({ selectedRosters: [], selectedRostersNum: 0 });
                             var resultedRosters: dropdownItem[] = [];
 
@@ -559,11 +565,13 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                     });
                                 }
 
-                                this.setState({ selectedRosters: resultedRosters, selectedRostersNum: resultedRosters.length });
+                                
+                            }
 
-                                if (resultedRosters.length > this.state.maxNumberOfTeams) {
-                                    this.setState({ isMaxNumberOfTeamsError: true });
-                                }
+                            this.setState({ selectedRosters: resultedRosters, selectedRostersNum: resultedRosters.length });
+
+                            if (resultedRosters.length > this.state.maxNumberOfTeams) {
+                                this.setState({ isMaxNumberOfTeamsError: true });
                             }
                         }
                         else {

@@ -5,6 +5,7 @@
 
 namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories.TeamData
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -36,21 +37,38 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories.TeamData
         /// <inheritdoc/>
         public async Task<IEnumerable<TeamDataEntity>> GetTeamDataEntitiesByIdsAsync(IEnumerable<string> teamIds)
         {
-            var rowKeysFilter = this.GetRowKeysFilter(teamIds);
+            if (teamIds == null || !teamIds.Any())
+            {
+                return new List<TeamDataEntity>();
+            }
 
-            return await this.GetWithFilterAsync(rowKeysFilter);
+            List<TeamDataEntity> teamDataEntities = new List<TeamDataEntity>();
+            string rowKeyFilter = string.Empty;
+
+            // batch the calls to azure storage, Url was too long (max url (2048 char) / channelId (60 char))
+            var maxNoPerFilter = 20;
+            var batchAmount = (int)Math.Ceiling((double)teamIds.Count() / maxNoPerFilter);
+
+            for (var i = 0; i < batchAmount; i++)
+            {
+                var currentIds = teamIds.Skip(i * maxNoPerFilter).Take(maxNoPerFilter);
+
+                rowKeyFilter = this.GetRowKeysFilter(currentIds);
+
+                var data = await this.GetWithFilterAsync(rowKeyFilter);
+
+                teamDataEntities.AddRange(data);
+
+                rowKeyFilter = string.Empty;
+            }
+
+            return teamDataEntities;
         }
 
         /// <inheritdoc/>
         public async Task<IEnumerable<string>> GetTeamNamesByIdsAsync(IEnumerable<string> ids)
         {
-            if (ids == null || !ids.Any())
-            {
-                return new List<string>();
-            }
-
-            var rowKeysFilter = this.GetRowKeysFilter(ids);
-            var teamDataEntities = await this.GetWithFilterAsync(rowKeysFilter);
+            IEnumerable<TeamDataEntity> teamDataEntities = await this.GetTeamDataEntitiesByIdsAsync(ids);
 
             return teamDataEntities.Select(p => p.Name).OrderBy(p => p);
         }

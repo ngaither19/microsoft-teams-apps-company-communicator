@@ -447,10 +447,12 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         if (file) {
             var cardsize = JSON.stringify(this.card).length;
             //parses the CSV file using papa parse library
+
             Papa.parse(file, {
                 skipEmptyLines: true,
                 delimiter: "\t",
                 complete: ({ errors, data }) => {
+
                     if (errors.length > 0) {
                         //file is invalid, show the message for the user
                         this.setState({
@@ -479,17 +481,19 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                 //if we find the team on the list, let~s included in the the selection box
                                 if (found >= 0) {
 
+                                    // ImageUtil.makeInitialImage(this.state.teams[found].name)
+
                                     resultedTeams.push({
                                         key: this.state.teams[found].id,
                                         header: this.state.teams[found].name,
                                         content: this.state.teams[found].mail,
-                                        image: ImageUtil.makeInitialImage(this.state.teams[found].name),
+                                        image: null,
                                         team: {
                                             id: this.state.teams[found].id
                                         }
                                     });
                                 }
-                                
+
                             }
 
                             //set state with the selecion box
@@ -565,7 +569,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                     });
                                 }
 
-                                
+
                             }
 
                             this.setState({ selectedRosters: resultedRosters, selectedRostersNum: resultedRosters.length });
@@ -659,12 +663,14 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
 
     private makeDropdownItemList = (items: any[], fromItems: any[] | undefined) => {
         const dropdownItemList: dropdownItem[] = [];
+        // ImageUtil.makeInitialImage(fromItems!.find(x => x.id === element).name)
+
         items.forEach(element =>
             dropdownItemList.push(
                 typeof element !== "string" ? element : {
                     key: fromItems!.find(x => x.id === element).id,
                     header: fromItems!.find(x => x.id === element).name,
-                    image: ImageUtil.makeInitialImage(fromItems!.find(x => x.id === element).name),
+                    image: null,
                     team: {
                         id: element
                     }
@@ -1449,6 +1455,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
     private onUnselectAllTeams = () => {
         this.setState({ isMaxNumberOfTeamsError: false });
         this.setState({ selectedTeams: [], selectedTeamsNum: 0 });
+        // this.CSVfileInputTeams.current.value = null;
     }
 
     private onSelectAllRosters = () => {

@@ -7,7 +7,7 @@ import { withTranslation, WithTranslation } from "react-i18next";
 import { Menu, MoreIcon } from '@fluentui/react-northstar';
 import { getBaseUrl } from '../../configVariables';
 import * as microsoftTeams from "@microsoft/teams-js";
-import { duplicateDraftNotification, cancelSentNotification } from '../../apis/messageListApi';
+import { duplicateDraftNotification, cancelSentNotification, emailUnreadsNotification } from '../../apis/messageListApi';
 import { selectMessage, getMessagesList, getDraftMessagesList } from '../../actions';
 import { TFunction } from "i18next";
 
@@ -103,6 +103,21 @@ class Overflow extends React.Component<OverflowProps, OverflowState> {
                                 });
                             }
                         },
+                        {
+                            //new option to notify unreads using email
+                            key: 'emailunreads',
+                            content: this.localize("emailunreads"),
+                            onClick: (event: any) => {
+                                event.stopPropagation();
+                                this.setState({
+                                    menuOpen: false,
+                                });
+                                this.emailunreads(this.props.message.id).then(() => {
+                                    //TODO: Update the sent list with a message saying email was triggered to notify unread messages
+                                    this.props.getMessagesList();
+                                });
+                            }
+                        },
                     ],
                 },
                 onMenuOpenChange: (e: any, { menuOpen }: any) => {
@@ -140,6 +155,15 @@ class Overflow extends React.Component<OverflowProps, OverflowState> {
     private cancelSentMessage = async (id: number) => {
         try {
             await cancelSentNotification(id);
+        } catch (error) {
+            return error;
+        }
+    }
+
+    //calls the emailUnreadsNotification to send emails to all users who not read the message with id
+    private emailunreads = async (id: number) => {
+        try {
+            await emailUnreadsNotification(id);
         } catch (error) {
             return error;
         }

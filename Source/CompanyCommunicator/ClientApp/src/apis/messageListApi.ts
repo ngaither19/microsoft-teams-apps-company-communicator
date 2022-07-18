@@ -148,3 +148,9 @@ export const getAuthenticationConsentMetadata = async (windowLocationOriginDomai
     let url = `${baseAxiosUrl}/authenticationMetadata/consentUrl?windowLocationOriginDomain=${windowLocationOriginDomain}&loginhint=${login_hint}`;
     return await axios.get(url, undefined, false);
 }
+
+//calls the logic app to notify unreads
+export const emailUnreadsNotification = async (id: number): Promise<any> => {
+    let url = baseAxiosUrl + "/sentnotifications/emailnotify/" + id;
+    return await axios.post(url);
+}

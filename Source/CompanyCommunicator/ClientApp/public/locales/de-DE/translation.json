@@ -116,5 +116,6 @@
   "TargetingNotAuthorized": "Sie sind nicht berechtigt, Company Communicator im Targeting-Modus einzurichten. Bitte wenden Sie sich an einen der Master-Administratoren.",
   "ManageGroups": "Verwalten von Gruppen",
   "GroupAlreadyIncluded": "Die Gruppe ist diesem Kanal bereits zugeordnet.",
-  "CSVIsTooBig": "Die CSV-Datei ist zu groß. Muss kleiner sein als: "
+  "CSVIsTooBig": "Die CSV-Datei ist zu groß. Muss kleiner sein als: ",
+  "emailunreads": "E-Mails, die noch nicht gelesen haben"
 }

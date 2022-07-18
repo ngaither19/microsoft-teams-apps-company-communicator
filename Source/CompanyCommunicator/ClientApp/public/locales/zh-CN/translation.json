@@ -116,5 +116,6 @@
   "TargetingNotAuthorized": "您未授权在定位模式下设置公司通信器。请联系主管理员之一。",
   "ManageGroups": "管理组",
   "GroupAlreadyIncluded": "该组已关联到此通道。",
-  "CSVIsTooBig": "CSV 太大。需要小于："
+  "CSVIsTooBig": "CSV 太大。需要小于：",
+  "emailunreads": "向尚未阅读的人发送电子邮件"
 }

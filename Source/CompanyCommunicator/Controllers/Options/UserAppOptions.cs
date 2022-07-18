@@ -39,5 +39,15 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Controllers.Options
         /// Gets or sets the maximum number of teams you can select to receive a message.
         /// </summary>
         public int MaxNumberOfTeams { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether get or sets a value indicating if the email fallback is enabled or not.
+        /// </summary>
+        public bool EnableEmailFallback { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether get or sets a value indicating the path to the email fallback workflow.
+        /// </summary>
+        public string EmailFallbackWorkflow { get; set; }
     }
 }

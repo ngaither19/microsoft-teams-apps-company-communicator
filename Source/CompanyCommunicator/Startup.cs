@@ -95,6 +95,8 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator
                     botOptions.MasterAdminUpns = configuration.GetValue<string>("MasterAdminUpns");
                     botOptions.ImageUploadBlobStorage = configuration.GetValue<bool>("ImageUploadBlobStorage");
                     botOptions.DisableReadTracking = configuration.GetValue<bool>("DisableReadTracking");
+                    botOptions.EmailFallbackWorkflow = configuration.GetValue<string>("EmailFallbackWorkflow");
+                    botOptions.EnableEmailFallback = configuration.GetValue<bool>("EnableEmailFallback");
                 });
             services.AddOptions<BotFilterMiddlewareOptions>()
                 .Configure<IConfiguration>((botFilterMiddlewareOptions, configuration) =>
@@ -139,7 +141,12 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator
                     options.DisableReadTracking =
                         configuration.GetValue<bool>("DisableReadTracking", false);
 
+                    options.EnableEmailFallback = configuration.GetValue<bool>("EnableEmailFallback", false);
+
+                    options.EmailFallbackWorkflow = configuration.GetValue<string>("EmailFallbackWorkflow", string.Empty);
+
                     options.MaxNumberOfTeams = configuration.GetValue<int>("MaxNumberOfTeams", 20);
+
                 });
 
             services.AddOptions();

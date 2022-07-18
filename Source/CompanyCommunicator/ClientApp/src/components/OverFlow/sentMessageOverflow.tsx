@@ -7,7 +7,7 @@ import { withTranslation, WithTranslation } from "react-i18next";
 import { Menu, MoreIcon } from '@fluentui/react-northstar';
 import { getBaseUrl } from '../../configVariables';
 import * as microsoftTeams from "@microsoft/teams-js";
-import { duplicateDraftNotification, cancelSentNotification, emailUnreadsNotification } from '../../apis/messageListApi';
+import { duplicateDraftNotification, cancelSentNotification, emailUnreadsNotification, getAppSettings } from '../../apis/messageListApi';
 import { selectMessage, getMessagesList, getDraftMessagesList } from '../../actions';
 import { TFunction } from "i18next";
 
@@ -22,6 +22,7 @@ export interface OverflowProps extends WithTranslation {
 
 export interface OverflowState {
     menuOpen: boolean;
+    enableEmailFallback: boolean;
 }
 
 export interface ITaskInfo {
@@ -36,16 +37,22 @@ export interface ITaskInfo {
 
 class Overflow extends React.Component<OverflowProps, OverflowState> {
     readonly localize: TFunction;
+    enableEmailFallback: boolean;
     constructor(props: OverflowProps) {
         super(props);
         this.localize = this.props.t;
         this.state = {
             menuOpen: false,
+            enableEmailFallback: false,
         };
     }
 
     public componentDidMount() {
         microsoftTeams.initialize();
+        this.getAppSettings().then(() => {
+            
+            
+        });
     }
 
     public render(): JSX.Element {
@@ -107,6 +114,8 @@ class Overflow extends React.Component<OverflowProps, OverflowState> {
                             //new option to notify unreads using email
                             key: 'emailunreads',
                             content: this.localize("emailunreads"),
+                            hidden: !(this.state.enableEmailFallback),
+                            
                             onClick: (event: any) => {
                                 event.stopPropagation();
                                 this.setState({
@@ -149,6 +158,16 @@ class Overflow extends React.Component<OverflowProps, OverflowState> {
             await duplicateDraftNotification(id);
         } catch (error) {
             return error;
+        }
+    }
+
+    // get the app configuration values and set targeting mode from app settings
+    private getAppSettings = async () => {
+        let response = await getAppSettings();
+            if (response.data) {
+                this.setState({
+                    enableEmailFallback: response.data.enableEmailFallback, 
+            });
         }
     }
 

@@ -74,5 +74,15 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Services.CommonBot
         /// Gets or sets a value indicating whether gets or sets the DisableReadTracking flag.
         /// </summary>
         public bool DisableReadTracking { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether get or sets a value indicating if the email fallback is enabled or not.
+        /// </summary>
+        public bool EnableEmailFallback { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether get or sets a value indicating the path to the email fallback workflow.
+        /// </summary>
+        public string EmailFallbackWorkflow { get; set; }
     }
 }

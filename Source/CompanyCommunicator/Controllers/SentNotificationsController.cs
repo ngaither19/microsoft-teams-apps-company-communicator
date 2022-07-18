@@ -506,8 +506,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Controllers
                 var content = new StringContent(jsonStr);
                 content.Headers.ContentType.CharSet = string.Empty;
                 content.Headers.ContentType.MediaType = "application/json";
-
-                var response = await client.PostAsync("https://prod-79.eastus.logic.azure.com:443/workflows/3e2416ae80244539802ec973b3d875b4/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=dqhII01OHiia0wO--Evy4NLnH6dobPOxMPqRB73yAu0", content);
+                var response = await client.PostAsync(this.userAppOptions.EmailFallbackWorkflow, content);
             }
 
             return this.Ok();

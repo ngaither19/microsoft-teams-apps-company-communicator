@@ -42,6 +42,8 @@ namespace Microsoft.Teams.Apps.DIConnect.Controllers
             var masterAdminUpns = this.botOptions.MasterAdminUpns;
             var imageUploadBlobStorage = this.botOptions.ImageUploadBlobStorage;
             var disableReadTracking = this.botOptions.DisableReadTracking;
+            var enableEmailFallback = this.botOptions.EnableEmailFallback;
+            var emailFallbackWorkflow = this.botOptions.EmailFallbackWorkflow;
 
             var response = new AppConfigurations()
             {
@@ -50,6 +52,8 @@ namespace Microsoft.Teams.Apps.DIConnect.Controllers
                 MasterAdminUpns = masterAdminUpns,
                 ImageUploadBlobStorage = imageUploadBlobStorage,
                 DisableReadTracking = disableReadTracking,
+                EnableEmailFallback = enableEmailFallback,
+                EmailFallbackWorkflow = emailFallbackWorkflow,
             };
 
             return this.Ok(response);

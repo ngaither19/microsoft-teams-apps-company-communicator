@@ -117,5 +117,7 @@
   "ManageGroups": "ניהול קבוצות",
   "GroupAlreadyIncluded": "הקבוצה כבר משויכת לערוץ זה.",
   "CSVIsTooBig": "CSV הוא גדול מדי. צריך להיות קטן יותר מ: ",
-  "emailunreads": "שלח דואל למי שלא קרא"
+  "emailunreads": "שלח דואל למי שלא קרא",
+  "EmailFallbackTitle": "בקשת הדואר האלקטרוני שלך עומדת בתור",
+  "EmailFallbackSuccessMessage1": "סגור חלון זה והמתן עד שההודעות האלקטרוניות יעובדו. תודה."
 }

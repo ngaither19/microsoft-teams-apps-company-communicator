@@ -117,5 +117,7 @@
   "ManageGroups": "Gérer les groupes",
   "GroupAlreadyIncluded": "Le groupe est déjà associé à ce canal.",
   "CSVIsTooBig": "Le fichier CSV est trop grand. Doit être plus petit que : ",
-  "emailunreads": "Envoyer e-mail à ceux qui n’ont pas lu"
+  "emailunreads": "Envoyer e-mail à ceux qui n’ont pas lu",
+  "EmailFallbackTitle": "Votre demande par e-mail est mise en file d’attente",
+  "EmailFallbackSuccessMessage1": "Fermez cette fenêtre et attendez que les e-mails soient traités. Merci."
 }

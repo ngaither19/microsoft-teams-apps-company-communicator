@@ -127,5 +127,7 @@
   "SelectAll": "Select all",
   "UnselectAll": "Unselect all",
   "MaxTeamsError": "You are trying to send the message to too many teams. Please select fewer teams and try again.",
-  "emailunreads": "Email who haven't read messages"
+  "emailunreads": "Email who haven't read",
+  "EmailFallbackTitle": "Your email request is queued",
+  "EmailFallbackSuccessMessage1": "Close this window and wait until the emails get processed. Thank you."
 }

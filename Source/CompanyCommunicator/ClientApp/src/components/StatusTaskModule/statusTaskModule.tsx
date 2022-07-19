@@ -4,11 +4,11 @@
 import * as React from 'react';
 import { withTranslation, WithTranslation } from "react-i18next";
 import './statusTaskModule.scss';
-import { getSentNotification, exportNotification } from '../../apis/messageListApi';
+import { getSentNotification, exportNotification, emailUnreadsNotification, getAppSettings } from '../../apis/messageListApi';
 import { RouteComponentProps } from 'react-router-dom';
 import * as AdaptiveCards from "adaptivecards";
 import { TooltipHost } from 'office-ui-fabric-react';
-import { Loader, List, Image, Button, DownloadIcon, AcceptIcon, Flex } from '@fluentui/react-northstar';
+import { Loader, List, Image, Button, DownloadIcon, EmailIcon, AcceptIcon, Flex } from '@fluentui/react-northstar';
 import * as microsoftTeams from "@microsoft/teams-js";
 import {
     getInitAdaptiveCard, setCardTitle, setCardImageLink, setCardSummary,
@@ -53,7 +53,7 @@ export interface IMessage {
     isImportant?: boolean;
     reads?: string;
     csvUsers: string;
-    buttonTrackingClicks: string;
+    buttonTrackingClicks?: string;
 }
 
 export interface IStatusState {
@@ -61,6 +61,7 @@ export interface IStatusState {
     loader: boolean;
     page: string;
     teamId?: string;
+    enableEmailFallback?: boolean;
 }
 
 interface StatusTaskModuleProps extends RouteComponentProps, WithTranslation { }
@@ -88,6 +89,7 @@ class StatusTaskModule extends React.Component<StatusTaskModuleProps, IStatusSta
             loader: true,
             page: "ViewStatus",
             teamId: '',
+            enableEmailFallback: false,
         };
     }
 
@@ -100,35 +102,47 @@ class StatusTaskModule extends React.Component<StatusTaskModuleProps, IStatusSta
             });
         });
 
-        if ('id' in params) {
-            let id = params['id'];
-            this.getItem(id).then(() => {
-                this.setState({
-                    loader: false
-                }, () => {
-                    setCardTitle(this.card, this.state.message.title);
-                    setCardImageLink(this.card, this.state.message.imageLink);
-                    setCardSummary(this.card, this.state.message.summary);
-                    setCardAuthor(this.card, this.state.message.author);
-                        
-                    if (this.state.message.buttonTitle && this.state.message.buttonLink && !this.state.message.buttons) {
-                        setCardBtns(this.card, [{
-                            "type": "Action.OpenUrl",
-                            "title": this.state.message.buttonTitle,
-                            "url": this.state.message.buttonLink,
-                        }]);
+        this.getAppSettings().then(() => {
+            if ('id' in params) {
+                let id = params['id'];
+                this.getItem(id).then(() => {
+                    this.setState({
+                        loader: false
+                    }, () => {
+                        setCardTitle(this.card, this.state.message.title);
+                        setCardImageLink(this.card, this.state.message.imageLink);
+                        setCardSummary(this.card, this.state.message.summary);
+                        setCardAuthor(this.card, this.state.message.author);
+
+                        if (this.state.message.buttonTitle && this.state.message.buttonLink && !this.state.message.buttons) {
+                            setCardBtns(this.card, [{
+                                "type": "Action.OpenUrl",
+                                "title": this.state.message.buttonTitle,
+                                "url": this.state.message.buttonLink,
+                            }]);
                         }
                         else {
                             setCardBtns(this.card, JSON.parse(this.state.message.buttons));
-                    }
+                        }
 
-                    let adaptiveCard = new AdaptiveCards.AdaptiveCard();
-                    adaptiveCard.parse(this.card);
-                    let renderedCard = adaptiveCard.render();
-                    document.getElementsByClassName('adaptiveCardContainer')[0].appendChild(renderedCard);
-                    let link = this.state.message.buttonLink;
-                    adaptiveCard.onExecuteAction = function (action) { window.open(link, '_blank'); }
+                        let adaptiveCard = new AdaptiveCards.AdaptiveCard();
+                        adaptiveCard.parse(this.card);
+                        let renderedCard = adaptiveCard.render();
+                        document.getElementsByClassName('adaptiveCardContainer')[0].appendChild(renderedCard);
+                        let link = this.state.message.buttonLink;
+                        adaptiveCard.onExecuteAction = function (action) { window.open(link, '_blank'); }
+                    });
                 });
+            }
+        });
+    }
+
+    // get the app configuration values and set targeting mode from app settings
+    private getAppSettings = async () => {
+        let response = await getAppSettings();
+        if (response.data) {
+            this.setState({
+                enableEmailFallback: response.data.enableEmailFallback,
             });
         }
     }
@@ -245,6 +259,8 @@ class StatusTaskModule extends React.Component<StatusTaskModuleProps, IStatusSta
                                         <Flex.Item>
                                             <TooltipHost content={!this.state.message.sendingCompleted ? "" : (this.state.message.canDownload ? "" : this.localize("ExportButtonProgressText"))} calloutProps={{ gapSpace: 0 }}>
                                                 <Button icon={<DownloadIcon size="medium" />} disabled={!this.state.message.canDownload || !this.state.message.sendingCompleted} content={this.localize("ExportButtonText")} id="exportBtn" onClick={this.onExport} primary />
+                                                <p />
+                                                <Button icon={<EmailIcon size="medium" />} disabled={(!this.state.message.canDownload || !this.state.message.sendingCompleted) && this.state.enableEmailFallback} content={this.localize("emailunreads")} id="emailtBtn" onClick={this.onEmail} primary />
                                             </TooltipHost>
                                         </Flex.Item>
                                     </Flex>
@@ -269,6 +285,27 @@ class StatusTaskModule extends React.Component<StatusTaskModuleProps, IStatusSta
                                 <span>{this.localize("ExportQueueSuccessMessage2")}</span>
                                 <br />
                                 <span>{this.localize("ExportQueueSuccessMessage3")}</span>
+                            </div>
+                            <Flex className="footerContainer" vAlign="end" hAlign="end" gap="gap.small">
+                                <Flex className="buttonContainer">
+                                    <Button content={this.localize("CloseText")} id="closeBtn" onClick={this.onClose} primary />
+                                </Flex>
+                            </Flex>
+                        </Flex>
+                    </div>
+                );
+            }
+            else if (this.state.page === "SuccessPageEmail") {
+                return (
+                    <div className="taskModule">
+                        <Flex column className="formContainer" vAlign="stretch" gap="gap.small">
+                            <div className="displayMessageField">
+                                <br />
+                                <br />
+                                <div><span><AcceptIcon className="iconStyle" xSpacing="before" size="largest" outline /></span>
+                                    <h1>{this.localize("EmailFallbackTitle")}</h1></div>
+                                <span>{this.localize("EmailFallbackSuccessMessage1")}</span>
+                                <br />
                             </div>
                             <Flex className="footerContainer" vAlign="end" hAlign="end" gap="gap.small">
                                 <Flex className="buttonContainer">
@@ -319,6 +356,18 @@ class StatusTaskModule extends React.Component<StatusTaskModuleProps, IStatusSta
             this.setState({ page: "ErrorPage" });
         });
     }
+
+    private onEmail = async () => {
+        let spanner = document.getElementsByClassName("sendingLoader");
+        spanner[0].classList.remove("hiddenLoader");
+
+        await emailUnreadsNotification(this.state.message.id).then(() => {
+            this.setState({ page: "SuccessPageEmail" });
+        }).catch(() => {
+            this.setState({ page: "ErrorPage" });
+        });
+    }
+
 
     private getItemList = (items: string[]) => {
         let resultedTeams: IListItem[] = [];

@@ -117,5 +117,7 @@
   "ManageGroups": "그룹 관리",
   "GroupAlreadyIncluded": "그룹이 이미 이 채널에 연결되어 있습니다.",
   "CSVIsTooBig": "CSV가 너무 큽습니다. 다음보다 작아야 합니다. ",
-  "emailunreads": "읽지 않은 사람에게 이메일 보내기"
+  "emailunreads": "읽지 않은 사람에게 이메일 보내기",
+  "EmailFallbackTitle": "이메일 요청이 대기 중입니다.",
+  "EmailFallbackSuccessMessage1": "이 창을 닫고 이메일이 처리 될 때까지 기다리십시오. 감사합니다."
 }

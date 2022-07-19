@@ -118,5 +118,7 @@
   "ManageGroups": "Gerenciar Grupos",
   "GroupAlreadyIncluded": "O grupo já está associado a este canal do Teams.",
   "CSVIsTooBig": "O CSV é muito grande. Precisa ser menor do que: ",
-  "emailunreads": "Envia email a quem não leu"
+  "emailunreads": "Envia email a quem não leu",
+  "EmailFallbackTitle": "Sua solicitação de e-mail está na fila",
+  "EmailFallbackSuccessMessage1": "Feche essa janela e espere até que os e-mails sejam processados. Obrigado."
 }

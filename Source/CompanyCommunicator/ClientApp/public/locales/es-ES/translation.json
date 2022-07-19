@@ -118,6 +118,8 @@
   "ManageGroups": "Administrar grupos",
   "GroupAlreadyIncluded": "El grupo ya está asociado a este canal.",
   "CSVIsTooBig": "El CSV es demasiado grande. Debe ser más pequeño que: ",
-  "emailunreads": "Enviar email a quienes no han leído"
+  "emailunreads": "Enviar email a quienes no han leído",
+  "EmailFallbackTitle": "Su solicitud de correo electrónico está en cola",
+  "EmailFallbackSuccessMessage1": "Cierre esta ventana y espere hasta que se procesen los correos electrónicos. Gracias."
 }
   

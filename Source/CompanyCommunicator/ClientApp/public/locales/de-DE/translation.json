@@ -117,5 +117,7 @@
   "ManageGroups": "Verwalten von Gruppen",
   "GroupAlreadyIncluded": "Die Gruppe ist diesem Kanal bereits zugeordnet.",
   "CSVIsTooBig": "Die CSV-Datei ist zu groß. Muss kleiner sein als: ",
-  "emailunreads": "E-Mails, die noch nicht gelesen haben"
+  "emailunreads": "E-Mails, die noch nicht gelesen haben",
+  "EmailFallbackTitle": "Ihre E-Mail-Anfrage befindet sich in der Warteschlange",
+  "EmailFallbackSuccessMessage1": "Schließen Sie dieses Fenster und warten Sie, bis die E-Mails verarbeitet werden. Vielen Dank."
 }

@@ -121,5 +121,7 @@
   "CardImage": "訊息分類圖示",
   "TargetGroups": "目標群組",
   "CSVIsTooBig": "檔案太大。 必需小於： ",
-  "emailunreads": "向尚未閱讀的人發送電子郵件"
+  "emailunreads": "向尚未閱讀的人發送電子郵件",
+  "EmailFallbackTitle": "您的電子郵件請求已排隊",
+  "EmailFallbackSuccessMessage1": "關閉此視窗並等待電子郵件得到處理。謝謝。"
 }

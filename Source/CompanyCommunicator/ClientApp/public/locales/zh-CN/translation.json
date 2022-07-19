@@ -117,5 +117,7 @@
   "ManageGroups": "管理组",
   "GroupAlreadyIncluded": "该组已关联到此通道。",
   "CSVIsTooBig": "CSV 太大。需要小于：",
-  "emailunreads": "向尚未阅读的人发送电子邮件"
+  "emailunreads": "向尚未阅读的人发送电子邮件",
+  "EmailFallbackTitle": "您的电子邮件请求已排队",
+  "EmailFallbackSuccessMessage1": "关闭此窗口并等待电子邮件得到处理。谢谢。"
 }

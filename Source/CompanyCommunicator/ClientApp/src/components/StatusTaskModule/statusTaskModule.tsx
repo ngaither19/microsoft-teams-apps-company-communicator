@@ -259,7 +259,7 @@ class StatusTaskModule extends React.Component<StatusTaskModuleProps, IStatusSta
                                         <Flex.Item>
                                             <TooltipHost content={!this.state.message.sendingCompleted ? "" : (this.state.message.canDownload ? "" : this.localize("ExportButtonProgressText"))} calloutProps={{ gapSpace: 0 }}>
                                                 <Button icon={<DownloadIcon size="medium" />} disabled={!this.state.message.canDownload || !this.state.message.sendingCompleted} content={this.localize("ExportButtonText")} id="exportBtn" onClick={this.onExport} primary />
-                                                <p />
+                                                {' '}
                                                 <Button icon={<EmailIcon size="medium" />} disabled={(!this.state.message.canDownload || !this.state.message.sendingCompleted) && this.state.enableEmailFallback} content={this.localize("emailunreads")} id="emailtBtn" onClick={this.onEmail} primary />
                                             </TooltipHost>
                                         </Flex.Item>

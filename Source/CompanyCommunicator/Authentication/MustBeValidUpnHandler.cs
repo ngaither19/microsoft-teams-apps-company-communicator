@@ -12,6 +12,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Authentication
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.Extensions.Options;
+    using Newtonsoft.Json;
 
     /// <summary>
     /// This class is an authorization handler, which handles the authorization requirement.

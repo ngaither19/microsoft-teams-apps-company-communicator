@@ -3,8 +3,6 @@
 // Licensed under the MIT License.
 // </copyright>
 
-using Microsoft.Teams.Apps.CompanyCommunicator.Common.Clients;
-
 namespace Microsoft.Teams.Apps.CompanyCommunicator
 {
     using System;
@@ -24,6 +22,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator
     using Microsoft.Teams.Apps.CompanyCommunicator.Authentication;
     using Microsoft.Teams.Apps.CompanyCommunicator.Bot;
     using Microsoft.Teams.Apps.CompanyCommunicator.Common.Adapter;
+    using Microsoft.Teams.Apps.CompanyCommunicator.Common.Clients;
     using Microsoft.Teams.Apps.CompanyCommunicator.Common.Extensions;
     using Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories;
     using Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories.ChannelData;
@@ -274,7 +273,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator
             // overridden by any deployment specific value. It can stay the default value
             // that is set in the project's configuration.
             authenticationOptions.AzureAdValidIssuers = configuration.GetValue<string>("AzureAd:ValidIssuers");
-
+            authenticationOptions.AuthorizedCreatorsGroup = configuration.GetValue<string>("AuthorizedCreatorsGroup");
             authenticationOptions.DisableCreatorUpnCheck = configuration.GetValue<bool>("DisableCreatorUpnCheck", false);
             authenticationOptions.AuthorizedCreatorUpns = configuration.GetValue<string>("AuthorizedCreatorUpns");
         }

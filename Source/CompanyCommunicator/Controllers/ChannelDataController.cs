@@ -19,7 +19,8 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Controllers
     /// Controller for the Channels data.
     /// </summary>
     [Route("api/channels")]
-    [Authorize(PolicyNames.MustBeValidUpnPolicy)]
+    // [Authorize(PolicyNames.MustBeValidUpnPolicy)]
+    [Authorize(PolicyNames.ADGroupPolicy)]
     public class ChannelDataController : ControllerBase
     {
         private readonly IChannelDataRepository channelDataRepository;

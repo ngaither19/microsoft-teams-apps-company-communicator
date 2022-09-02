@@ -19,7 +19,8 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Controllers
     /// Controller for the Groups Association data.
     /// </summary>
     [Route("api/groupassociations")]
-    [Authorize(PolicyNames.MustBeValidUpnPolicy)]
+    // [Authorize(PolicyNames.MustBeValidUpnPolicy)]
+    [Authorize(PolicyNames.ADGroupPolicy)]
     public class GroupAssociationController : ControllerBase
     {
         private readonly IGroupAssociationDataRepository groupAssociationDataRepository;

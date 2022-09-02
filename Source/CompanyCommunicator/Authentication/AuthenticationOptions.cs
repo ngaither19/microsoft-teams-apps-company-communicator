@@ -46,5 +46,10 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Authentication
         /// create notifications.
         /// </summary>
         public string AuthorizedCreatorUpns { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name of the group with authorized creators/authors.
+        /// </summary>
+        public string AuthorizedCreatorsGroup { get; set; }
     }
 }

@@ -36,7 +36,8 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Controllers
     /// Controller for the draft notification data.
     /// </summary>
     [Route("api/draftNotifications")]
-    [Authorize(PolicyNames.MustBeValidUpnPolicy)]
+    // [Authorize(PolicyNames.MustBeValidUpnPolicy)]
+    [Authorize(PolicyNames.ADGroupPolicy)]
     public class DraftNotificationsController : ControllerBase
     {
         private readonly INotificationDataRepository notificationDataRepository;

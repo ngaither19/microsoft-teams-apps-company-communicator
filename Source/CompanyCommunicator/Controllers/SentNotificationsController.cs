@@ -37,7 +37,8 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Controllers
     /// <summary>
     /// Controller for the sent notification data.
     /// </summary>
-    [Authorize(PolicyNames.MustBeValidUpnPolicy)]
+    // [Authorize(PolicyNames.MustBeValidUpnPolicy)]
+    [Authorize(PolicyNames.ADGroupPolicy)]
     [Route("api/sentNotifications")]
     public class SentNotificationsController : ControllerBase
     {

@@ -33,7 +33,6 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Authentication
             AuthenticationOptions authenticationOptions)
         {
             AuthenticationServiceCollectionExtensions.RegisterAuthenticationServices(services, configuration, authenticationOptions);
-
             AuthenticationServiceCollectionExtensions.RegisterAuthorizationPolicy(services, configuration);
         }
 
@@ -175,9 +174,11 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Authentication
         private static void RegisterAuthorizationPolicy(IServiceCollection services, IConfiguration configuration)
         {
             var graphGroupDatascope = configuration.GetValue<string>("GroupsGraphScope");
+            string adGroup = configuration.GetValue<string>("AuthorizedCreatorsGroup");
             services.AddAuthorization(options =>
             {
                 var mustContainUpnClaimRequirement = new MustBeValidUpnRequirement();
+                var adGroupRequirement = new ADGroupRequirement(new string[] { graphGroupDatascope }, adGroup);
                 options.AddPolicy(
                     PolicyNames.MustBeValidUpnPolicy,
                     policyBuilder => policyBuilder
@@ -190,10 +191,17 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Authentication
                     .AddRequirements(new MSGraphScopeRequirement(new string[] { graphGroupDatascope }))
                     .RequireAuthenticatedUser()
                     .Build());
+                options.AddPolicy(
+                    PolicyNames.ADGroupPolicy,
+                    policyBuilder => policyBuilder
+                    .AddRequirements(adGroupRequirement)
+                    .RequireAuthenticatedUser()
+                    .Build());
             });
 
             services.AddScoped<IAuthorizationHandler, MustBeValidUpnHandler>();
             services.AddScoped<IAuthorizationHandler, MSGraphScopeHandler>();
+            services.AddScoped<IAuthorizationHandler, ADGroupHandler>();
         }
 
         private static bool AudienceValidator(

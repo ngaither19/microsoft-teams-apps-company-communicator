@@ -115,7 +115,7 @@
   "TargetingNotAuthorized": "타게팅 모드에서 회사 커뮤니케이터를 설정할 권한이 없습니다. 마스터 관리자 중 한 명에게 문의하십시오.",
   "ManageGroups": "그룹 관리",
   "GroupAlreadyIncluded": "그룹이 이미 이 채널에 연결되어 있습니다.",
-  "CSVIsTooBig": "CSV가 너무 큽습니다. 다음보다 작아야 합니다. "
+  "CSVIsTooBig": "CSV가 너무 큽습니다. 다음보다 작아야 합니다. ",
   "ErrorURLMessage": "URL은 https://로 시작해야 합니다.",
   "Support": "지원",
   "Feedback": "피드백"

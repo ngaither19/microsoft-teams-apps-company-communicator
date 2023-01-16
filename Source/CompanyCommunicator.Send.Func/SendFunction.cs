@@ -170,7 +170,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
                 }
 
                 // Send message.
-                var messageActivity = await this.GetMessageActivity(messageContent);
+                var messageActivity = await this.GetMessageActivity(messageContent, log);
 
                 // If the message is important, we need to notify the user in Teams
                 if (messageContent.IsImportant)
@@ -289,9 +289,9 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
             }
 
             // replacing id and key for read tracking purposes
-            notification.Content = notification.Content.Replace("[ID]", message.NotificationId);
-            notification.Content = notification.Content.Replace("[KEY]", message.RecipientData.RecipientId);
-            notification.Content = this.GetButtonTrackingUrl(notification.Content, message.NotificationId, message.RecipientData.RecipientId);
+            jsonAC = jsonAC.Replace("[ID]", message.NotificationId);
+            jsonAC = jsonAC.Replace("[KEY]", message.RecipientData.RecipientId);
+            jsonAC = this.GetButtonTrackingUrl(jsonAC, message.NotificationId, message.RecipientData.RecipientId);
 
             var adaptiveCardAttachment = new Attachment()
             {
@@ -311,7 +311,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
             {
                 return notification;
             }
-            
+
             string host = string.Empty;
 
             foreach (var item in result.body)

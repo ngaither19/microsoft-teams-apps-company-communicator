@@ -53,7 +53,8 @@ export interface IMessage {
     isImportant?: boolean;
     reads?: string;
     csvUsers: string;
-    buttonTrackingClicks: string;
+    csvFile: string;
+    buttonTrackingClicks?: string;
     createdBy?: string;
 }
 
@@ -73,6 +74,7 @@ class StatusTaskModule extends React.Component<StatusTaskModuleProps, IStatusSta
         title: "",
         buttons: "[]",
         csvUsers: "",
+        csvFile: "",
     };
 
     private card: any;
@@ -375,7 +377,8 @@ class StatusTaskModule extends React.Component<StatusTaskModuleProps, IStatusSta
         } else if (this.state.message.csvUsers && this.state.message.csvUsers.length > 0) {
             return (
                 <div key="allUsers">
-                    <h3>{this.localize("SentToCSV")}</h3>
+                    <h3>{this.localize("SentToCSV")}:</h3>
+                    <span>{this.state.message.csvFile}</span>
                 </div>);
         } else if (this.state.message.allUsers) {
             return (

@@ -2,10 +2,12 @@
 
 namespace Microsoft.Teams.Apps.CompanyCommunicator.Models
 {
+    //
+    // Class to Track user clicks.
     public class TrackingUserClicks
     {
-        public string name { get; set; }
-        public int clicks { get; set; }
-        public DateTime datetime { get; set; }
+        public string Name { get; set; }
+        public int Clicks { get; set; }
+        public DateTime Datetime { get; set; }
     }
 }

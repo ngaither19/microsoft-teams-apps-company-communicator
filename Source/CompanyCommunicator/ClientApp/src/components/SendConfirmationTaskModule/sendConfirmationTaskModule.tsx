@@ -40,6 +40,7 @@ export interface IMessage {
     buttons: string,
     isImportant?: boolean,
     csvUsers: string,
+    csvFile: string,
     channelId?: string,
     channelTitle?: string,
     channelImage?: string,
@@ -69,6 +70,7 @@ class SendConfirmationTaskModule extends React.Component<SendConfirmationTaskMod
         title: "",
         buttons: "[]",
         csvUsers: "",
+        csvFile: "",
         channelId: "",
     };
 
@@ -278,10 +280,12 @@ class SendConfirmationTaskModule extends React.Component<SendConfirmationTaskMod
         } else if (this.state.message.csvUsers.length > 0) {
             return (
             <div key="allUsers">
-                <span className="label">{this.localize("CSVUsersLabel")}</span>
-                <div className="noteText">
-                    <Text error content={this.localize("SendToCSVUsersNote")} />
-                </div>
+                    <span className="label">{this.localize("CSVUsersLabel")}: </span>
+                    <div className="noteText">
+                        <Text content={this.state.message.csvFile} />
+                        <br/>
+                        <Text error content={this.localize("SendToCSVUsersNote")} />
+                    </div>
             </div>);
         } else if (this.state.allUsers) {
             return (

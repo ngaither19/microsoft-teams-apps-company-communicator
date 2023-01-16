@@ -16,6 +16,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Controllers
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Reactive;
     using System.Security.Claims;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Authorization;
@@ -60,7 +61,8 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Controllers
         /// <param name="appSettingsService">App Settings service.</param>
         /// <param name="localizer">Localization service.</param>
         /// <param name="groupsService">group service.</param>
-        /// <param name="storageClientFactory">Storage Library</param>
+        /// <param name="storageClientFactory">Storage Library.</param>
+        /// <param name="userAppOptions">Options for the user app.</param>
         public DraftNotificationsController(
             INotificationDataRepository notificationDataRepository,
             ITeamDataRepository teamDataRepository,
@@ -79,7 +81,8 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Controllers
             this.storageClientFactory = storageClientFactory ?? throw new ArgumentNullException(nameof(storageClientFactory));
             this.userAppOptions = userAppOptions?.Value ?? throw new ArgumentNullException(nameof(userAppOptions));
             this.appSettingsService = appSettingsService ?? throw new ArgumentNullException(nameof(appSettingsService));
-            this.blobStorageProvider = blobStorageProvider ?? throw new ArgumentException(nameof(blobStorageProvider));
+
+            // this.blobStorageProvider = blobStorageProvider ?? throw new ArgumentException(nameof(blobStorageProvider));
         }
 
         /// <summary>
@@ -220,11 +223,6 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Controllers
                 await this.UploadToBlobStorage(notification);
             }
 
-
-            // TODO: double-check it
-           // notification.Buttons = this.GetButtonTrackingUrl(notification);
-
-
             var notificationEntity = new NotificationDataEntity
             {
                 PartitionKey = NotificationDataTableNames.DraftNotificationsPartition,
@@ -249,6 +247,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Controllers
                 Rosters = notification.Rosters,
                 Groups = notification.Groups,
                 CsvUsers = notification.CsvUsers,
+                CsvFile = notification.CsvFile,
                 AllUsers = notification.AllUsers,
                 Buttons = notification.Buttons,
                 TrackingUrl = this.HttpContext.Request.Scheme + "://" + this.HttpContext.Request.Host + "/api/sentNotifications/tracking",
@@ -436,6 +435,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Controllers
                 Rosters = notificationEntity.Rosters,
                 Groups = notificationEntity.Groups,
                 CsvUsers = notificationEntity.CsvUsers,
+                CsvFile = notificationEntity.CsvFile,
                 AllUsers = notificationEntity.AllUsers,
                 IsScheduled = notificationEntity.IsScheduled,
                 IsImportant = notificationEntity.IsImportant,

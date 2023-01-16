@@ -136,6 +136,53 @@ class TabContainer extends React.Component<ITaskInfoProps, ITabContainerState> {
        
 
         return (
+               <>
+                <div className='cc-header'>
+                    <Flex gap="gap.small" space='between'>
+                        <Flex gap="gap.small" vAlign="center">
+                            <img
+                                src={customHeaderImagePath == null ?
+                                    require("../../assets/Images/mslogo.png").default
+                                    : customHeaderImagePath}
+                                alt="Ms Logo"
+                                className="ms-logo"
+                                title={customHeaderText}
+                            />
+                            <span className="header-text" title={customHeaderText}>{customHeaderText}</span>
+                        </Flex>
+                        <Flex gap="gap.large" vAlign="center">
+                            <FlexItem>
+                                <a
+                                    href="https://aka.ms/M365CCIssues"
+                                    target="_blank" rel="noreferrer"
+                                >
+                                    <Tooltip
+                                        trigger={<img
+                                            src={require("../../assets/Images/HelpIcon.svg").default}
+                                            alt="Help"
+                                            className="support-icon"
+                                        />}
+                                        content={this.localize("Support")}
+                                        pointing={false}
+                                    />
+                                </a>
+                            </FlexItem>
+                            <FlexItem>
+                                <a href="https://aka.ms/M365CCFeedback" target="_blank" rel="noreferrer">
+                                    <Tooltip
+                                        trigger={<img
+                                            src={require("../../assets/Images/FeedbackIcon.svg").default}
+                                            alt="Feedback"
+                                            className='feedback-icon'
+                                        />}
+                                        content={this.localize("Feedback")}
+                                        pointing={false}
+                                    />
+                                </a>
+                            </FlexItem>
+                        </Flex>
+                    </Flex>
+                </div>
             <Flex className="tabContainer" column fill gap="gap.small">
                 <Flex className="newPostBtn" hAlign="end" vAlign="end" gap="gap.small">
                     {(this.targetingEnabled) &&
@@ -151,7 +198,8 @@ class TabContainer extends React.Component<ITaskInfoProps, ITabContainerState> {
                         <Accordion defaultActiveIndex={[0, 1, 2]} panels={panels} />
                     </Flex.Item>
                 </Flex>
-            </Flex>
+                </Flex>
+                </>
         );
     }
 

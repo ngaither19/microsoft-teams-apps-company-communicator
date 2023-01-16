@@ -4,8 +4,6 @@
 import * as AdaptiveCards from "adaptivecards";
 import MarkdownIt from "markdown-it";
 import { TFunction } from "i18next";
-import * as AdaptiveCards from "adaptivecards";
-import MarkdownIt from "markdown-it";
 
 // Static method to render markdown on the adaptive card
 AdaptiveCards.AdaptiveCard.onProcessMarkdown = function (text, result) {

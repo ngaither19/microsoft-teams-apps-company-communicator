@@ -24,6 +24,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Prep.Func.Test.PreparingToSen
     {
         private readonly Mock<ISendQueue> sendQueue = new Mock<ISendQueue>();
         private readonly Mock<INotificationDataRepository> notificationDataRepository = new Mock<INotificationDataRepository>();
+        
         /// <summary>
         /// Constructor tests.
         /// </summary>

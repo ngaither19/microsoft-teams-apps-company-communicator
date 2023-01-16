@@ -1,4 +1,4 @@
-﻿// <copyright file="GroupAssociationDataRepository.cs" company="Microsoft">
+﻿// <copyright file="ChannelDataRepository.cs" company="Microsoft">
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 // </copyright>

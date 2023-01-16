@@ -116,7 +116,7 @@
   "TargetingNotAuthorized": "Você não está autorizado a configurar o Company Communicator no modo de segmentação. Entre em contato com um dos administradores.",
   "ManageGroups": "Gerenciar Grupos",
   "GroupAlreadyIncluded": "O grupo já está associado a este canal do Teams.",
-  "CSVIsTooBig": "O CSV é muito grande. Precisa ser menor do que: "
+  "CSVIsTooBig": "O CSV é muito grande. Precisa ser menor do que: ",
   "ErrorURLMessage": "URL deve começar com https://",
   "Support": "Suporte",
   "Feedback": "Comentários"

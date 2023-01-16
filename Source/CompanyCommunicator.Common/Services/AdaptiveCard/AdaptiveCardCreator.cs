@@ -33,7 +33,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Services.AdaptiveCard
                 notificationDataEntity.Buttons,
                 notificationDataEntity.TrackingUrl,
                 notificationDataEntity.ChannelImage,
-                notificationDataEntity.ChannelTitle);
+                notificationDataEntity.ChannelTitle,
                 notificationDataEntity.Id);
         }
 
@@ -62,7 +62,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Services.AdaptiveCard
             string buttons,
             string trackingurl,
             string cardimage,
-            string cardtitle)
+            string cardtitle,
             string notificationId)
         {
             var version = new AdaptiveSchemaVersion(1, 0);
@@ -105,7 +105,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Services.AdaptiveCard
 
                 card.Body.Add(new AdaptiveImage()
                 {
-                    LongUrl = imageUrl,
+                    Url = new Uri(imageUrl, UriKind.RelativeOrAbsolute),
                     Spacing = AdaptiveSpacing.Default,
                     Size = AdaptiveImageSize.Stretch,
                     AltText = string.Empty,

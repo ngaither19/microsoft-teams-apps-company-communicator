@@ -120,9 +120,6 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Controllers
                 throw new ArgumentNullException(nameof(draftNotification));
             }
 
-            // TODO: double-check it
-           // draftNotification.Buttons = this.GetButtonTrackingUrl(draftNotification);
-
             var draftNotificationDataEntity = await this.notificationDataRepository.GetAsync(
                 NotificationDataTableNames.DraftNotificationsPartition,
                 draftNotification.Id);
@@ -324,34 +321,30 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Controllers
             // if we have a instance that was sent to a user
             if (sentnotificationEntity != null)
             {
-
                 List<TrackingUserClicks> result;
 
                 if (sentnotificationEntity.ButtonTracking is null)
                 {
-
                     result = new List<TrackingUserClicks>();
 
-                    var click = new TrackingUserClicks { name = buttonid, clicks = 1, datetime = DateTime.Now };
+                    var click = new TrackingUserClicks { Name = buttonid, Clicks = 1, Datetime = DateTime.Now };
                     result.Add(click);
                 }
                 else
                 {
-
                     result = JsonConvert.DeserializeObject<List<TrackingUserClicks>>(sentnotificationEntity.ButtonTracking);
 
-                    var button = result.Find(p => p.name == buttonid);
+                    var button = result.Find(p => p.Name == buttonid);
 
                     if (button == null)
                     {
-                        result.Add(new TrackingUserClicks { name = buttonid, clicks = 1, datetime = DateTime.Now });
+                        result.Add(new TrackingUserClicks { Name = buttonid, Clicks = 1, Datetime = DateTime.Now });
                     }
                     else
                     {
-                        button.clicks++;
-                        button.datetime = DateTime.Now;
+                        button.Clicks++;
+                        button.Datetime = DateTime.Now;
                     }
-
                 }
 
                 sentnotificationEntity.ButtonTracking = JsonConvert.SerializeObject(result);
@@ -485,6 +478,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Controllers
                 SendingCompleted = notificationEntity.IsCompleted(),
                 Reads = notificationEntity.Reads,
                 CsvUsers = notificationEntity.CsvUsers,
+                CsvFile = notificationEntity.CsvFile,
                 ButtonTrackingClicks = notificationEntity.ButtonTrackingClicks,
                 CreatedBy = notificationEntity.CreatedBy,
             };

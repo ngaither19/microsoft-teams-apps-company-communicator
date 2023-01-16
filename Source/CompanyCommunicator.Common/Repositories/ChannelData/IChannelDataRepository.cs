@@ -22,7 +22,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories.ChannelDa
         /// <summary>
         /// Sets the channel config.
         /// </summary>
-        /// <param name="channeltoUpdate">Data entity to set/create</param>
+        /// <param name="channeltoUpdate">Data entity to set/create.</param>
         /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         public Task SetChannelConfig(ChannelDataEntity channeltoUpdate);
     }

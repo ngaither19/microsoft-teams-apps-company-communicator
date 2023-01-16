@@ -27,7 +27,6 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Prep.Func.Test.PreparingToSen
         private readonly Mock<IMemoryCache> memoryCache = new Mock<IMemoryCache>();
         private readonly Mock<ILogger> logger = new Mock<ILogger>();
 
-
         /// <summary>
         /// Constructor tests.
         /// </summary>

@@ -47,6 +47,11 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Models
         public string CsvUsers { get; set; }
 
         /// <summary>
+        /// Gets or sets CsvFile value.
+        /// </summary>
+        public string CsvFile { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether a notification should be sent to all the users.
         /// </summary>
         public bool AllUsers { get; set; }

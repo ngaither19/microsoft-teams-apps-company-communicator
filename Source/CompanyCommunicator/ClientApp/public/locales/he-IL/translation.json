@@ -115,7 +115,7 @@
   "TargetingNotAuthorized": "אינך מורשה להגדיר את 'מתקשר חברה' במצב פילוח. נא פנה לאחד המנהלים הראשיים.",
   "ManageGroups": "ניהול קבוצות",
   "GroupAlreadyIncluded": "הקבוצה כבר משויכת לערוץ זה.",
-  "CSVIsTooBig": "CSV הוא גדול מדי. צריך להיות קטן יותר מ: "
+  "CSVIsTooBig": "CSV הוא גדול מדי. צריך להיות קטן יותר מ: ",
   "ErrorURLMessage": "כתובת URL חייבת להתחיל ב- https://‏",
   "Support": "תמיכה",
   "Feedback": "משוב"

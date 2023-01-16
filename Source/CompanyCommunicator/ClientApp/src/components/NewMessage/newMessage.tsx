@@ -19,9 +19,11 @@ import { ImageUtil } from '../../utility/imageutility';
 import { TFunction } from "i18next";
 import { OpenUrlAction } from 'adaptivecards';
 import { Icon, TooltipHost } from 'office-ui-fabric-react';
-
 import axios from '../../apis/axiosJWTDecorator';
 let baseAxiosUrl = getBaseUrl() + '/api';
+
+//image types valid for the upload
+const validImageTypes = ['image/gif', 'image/jpeg', 'image/png', 'image/jpg'];
 
 //hours to be chosen when scheduling messages
 const hours = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11",
@@ -60,6 +62,7 @@ export interface IDraftMessage {
     rosters: any[],
     groups: any[],
     csvusers: string,
+    csvfile: string,
     allUsers: boolean,
     isImportant: boolean, // indicates if the message is important
     isScheduled: boolean, // indicates if the message is scheduled
@@ -75,7 +78,6 @@ export interface formState {
     summary?: string,
     btnLink?: string,
     imageLink?: string,
-    localImagePath?: string,
     btnTitle?: string,
     author: string,
     card?: any,
@@ -88,6 +90,7 @@ export interface formState {
     csvLoaded: string,
     csvError: boolean,
     csvusers: string,
+    csvfile: string,
     teams?: any[],
     groups?: any[],
     exists?: boolean,
@@ -155,7 +158,6 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             author: "",
             btnLink: "",
             imageLink: "",
-            localImagePath:"",
             btnTitle: "",
             card: this.card,
             page: "CardCreation",
@@ -165,6 +167,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             groupsOptionSelected: false,
             csvOptionSelected: false,
             csvLoaded: "",
+            csvfile: "",
             csvError: false,
             csvusers: "",
             messageId: "",
@@ -200,7 +203,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         this.CSVfileInput = React.createRef();
         this.handleImageSelection = this.handleImageSelection.bind(this);
         this.handleCSVSelection = this.handleCSVSelection.bind(this);
-       
+
     }
 
     public async componentDidMount() {
@@ -213,13 +216,13 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
 
         //get the maximum number of teams that can receive a message
         let url = baseAxiosUrl + "/options";
-    
+
         try {
             var response = await axios.get(url);
-            this.setState({maxNumberOfTeams: response.data});
+            this.setState({ maxNumberOfTeams: response.data });
         }
         catch {
-            this.setState({maxNumberOfTeams: response.data})
+            this.setState({ maxNumberOfTeams: response.data })
         }
 
         // get teams context variables and store in the state
@@ -254,6 +257,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                             selectedTeams: selectedTeams,
                             selectedRosters: selectedRosters,
                             csvusers: this.state.csvusers,
+                            csvfile: this.state.csvfile,
                             selectedSchedule: this.state.selectedSchedule,
                             selectedImportant: this.state.selectedImportant,
                             scheduledDate: this.state.scheduledDate,
@@ -381,6 +385,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
     private handleCSVSelection() {
         //get the first file sealected
         const file = this.CSVfileInput.current.files[0];
+        //alert(file.name);
         //if we have a file
         if (file) {
             var cardsize = JSON.stringify(this.card).length;
@@ -390,7 +395,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             //parses the CSV file using papa parse library
             Papa.parse(file, {
                 skipEmptyLines: true,
-                delimiter:"\t",
+                delimiter: "\t",
                 complete: ({ errors, data }) => {
 
                     if (errors.length > 0) {
@@ -398,14 +403,17 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                         this.setState({
                             csvLoaded: this.localize("CSVInvalid"),
                             csvError: true,
-                            csvusers: ""
+                            csvusers: "",
+                            csvfile: ""
                         });
                     } else {
                         var csvfilesize = JSON.stringify(data).length;
                         if ((cardsize + csvfilesize) < maxCardSize) {
                             //file loaded
                             this.setState({
-                                csvLoaded: this.localize("CSVLoaded"),
+                                //csvLoaded: this.localize("CSVLoaded"),
+                                csvLoaded: file.name,
+                                csvfile: file.name,
                                 csvError: false,
                                 csvusers: JSON.stringify(data)
                             });
@@ -415,7 +423,8 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                             this.setState({
                                 csvLoaded: errorMessage,
                                 csvError: true,
-                                csvusers: ""
+                                csvusers: "",
+                                csvfile: ""
                             });
                         }
                     }
@@ -441,6 +450,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
     private handleCSVUploadClick = (event: any) => {
         this.setState({
             csvLoaded: "",
+            csvfile: "",
             csvError: false,
             csvusers: ""
         });
@@ -587,7 +597,8 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             }
             else if (draftMessageDetail.csvUsers.length > 0) { //we have a message sending to CSV users
                 selectedRadioButton = "csv"; //select the csv option radio
-                csvMsg = this.localize("CSVLoaded"); //update the message that will update the state
+                //csvMsg = this.localize("CSVLoaded"); //update the message that will update the state
+                csvMsg = draftMessageDetail.csvFile;
             }
             else if (draftMessageDetail.allUsers) {
                 selectedRadioButton = "allUsers";
@@ -609,6 +620,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                 selectedImportant: draftMessageDetail.isImportant,
                 scheduledDate: draftMessageDetail.scheduledDate,
                 csvusers: draftMessageDetail.csvUsers, //update the state with the list of users (JSON)
+                csvfile: draftMessageDetail.csvFile, //update  the stats with the name of the CSV file used to create the users JSON
                 csvLoaded: csvMsg, //updates the message that will be presented in the text field
                 csvError: !(csvMsg.length > 0), //state that stores the csv syntax analysis status
                 csvOptionSelected: (csvMsg.length > 0), //to show the fields and allow updates
@@ -667,84 +679,6 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
 
     public componentWillUnmount() {
         document.removeEventListener("keydown", this.escFunction, false);
-    }
-
-    private handleUploadClick = (event: any) => {
-        if (this.fileInput.current) {
-            this.fileInput.current.click();
-        }
-    }
-
-    private checkValidSizeOfImage = (resizedImageAsBase64: string) => {
-        var stringLength = resizedImageAsBase64.length - 'data:image/png;base64,'.length;
-        var sizeInBytes = 4 * Math.ceil((stringLength / 3))*0.5624896334383812;
-        var sizeInKb = sizeInBytes/1000;
-
-        if(sizeInKb <= 1024)
-            return true
-        
-        else
-            return false;
-    }
-    
-
-    private handleImageSelection = () => {
-        const file = this.fileInput.current.files[0];
-        
-        if(file){
-            const  fileType = file['type'];
-            const { type: mimeType } = file;
-
-            if (!validImageTypes.includes(fileType)) {
-               this.setState({errorImageUrlMessage: this.localize("ErrorImageTypesMessage")});
-               return;
-            }
-            
-            this.setState({localImagePath: file['name']});
-            this.setState({errorImageUrlMessage: ""});
-    
-    
-            const fileReader = new FileReader();
-            fileReader.readAsDataURL(file);
-            fileReader.onload = () => {
-                var image = new Image();
-                image.src = fileReader.result as string;
-                var resizedImageAsBase64 = fileReader.result as string;
-
-                image.onload = function (e: any) {
-                    const MAX_WIDTH = 1024;
-    
-                    if (image.width > MAX_WIDTH) {
-                        const canvas = document.createElement('canvas');
-                        canvas.width = MAX_WIDTH;
-                        canvas.height = ~~(image.height * (MAX_WIDTH / image.width));
-                        const context = canvas.getContext('2d', { alpha: false });
-                        if (!context) {
-                            return;
-                        }
-                        context.drawImage(image, 0, 0, canvas.width, canvas.height);
-                        resizedImageAsBase64 = canvas.toDataURL(mimeType);
-                    }
-                }
-
-                if (!this.checkValidSizeOfImage(resizedImageAsBase64)) {
-                    this.setState({ errorImageUrlMessage: this.localize("ErrorImageSizeMessage") });
-                    return;
-                }
-                
-
-                setCardImageLink(this.card, resizedImageAsBase64);
-                this.updateCard();
-                this.setState({
-                    imageLink: resizedImageAsBase64
-                    });
-            }
-    
-            fileReader.onerror = (error) => {
-                //reject(error);
-            }
-        }
-        
     }
 
     public render(): JSX.Element {
@@ -877,7 +811,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                                                 <Flex className="selectTeamsContainer" gap="gap.small" hidden={!this.state.teamsOptionSelected}>
                                                                     <Button content={this.localize("SelectAll")} onClick={this.onSelectAllTeams} />
                                                                     <Button content={this.localize("UnselectAll")} onClick={this.onUnselectAllTeams} />
-                                                                </Flex>  
+                                                                </Flex>
                                                                 <Dropdown
                                                                     hidden={!this.state.teamsOptionSelected}
                                                                     placeholder={this.localize("SendToGeneralChannelPlaceHolder")}
@@ -905,7 +839,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                                                 <Component {...props} />
                                                                 <Flex className="selectTeamsContainer" gap="gap.small" hidden={!this.state.rostersOptionSelected}>
                                                                     <Button content={this.localize("SelectAll")} onClick={this.onSelectAllRosters} />
-                                                                    <Button content={this.localize("UnselectAll")} onClick={this.onUnselectAllRosters}  />
+                                                                    <Button content={this.localize("UnselectAll")} onClick={this.onUnselectAllRosters} />
                                                                 </Flex>
                                                                 <Dropdown
                                                                     hidden={!this.state.rostersOptionSelected}
@@ -1099,7 +1033,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                 <Flex.Item size="size.half">
                                     <div>
                                         <Flex hAlign="end">
-                                            <Label content={JSON.stringify(this.card).length -this.imageSize + "/" + maxCardSize} />
+                                            <Label content={JSON.stringify(this.card).length - this.imageSize + "/" + maxCardSize} />
                                         </Flex>
                                         <div className="adaptiveCardContainer">
                                         </div>
@@ -1142,7 +1076,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         if (this.targetingEnabled && !isMaster) {
             opName = "groups";
         }
-        
+
         this.setState({
             selectedRadioBtn: opName,
             teamsOptionSelected: opName === 'teams',
@@ -1304,10 +1238,10 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
     private onSelectAllTeams = () => {
         var teams = this.getItems();
         if (teams.length > this.state.maxNumberOfTeams) {
-            this.setState({ isMaxNumberOfTeamsError: true});
+            this.setState({ isMaxNumberOfTeamsError: true });
         }
         else {
-            this.setState({ isMaxNumberOfTeamsError: false});
+            this.setState({ isMaxNumberOfTeamsError: false });
         }
 
         this.setState({ selectedTeams: teams, selectedTeamsNum: teams.length });
@@ -1321,10 +1255,10 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
     private onSelectAllRosters = () => {
         var teams = this.getItems();
         if (teams.length > this.state.maxNumberOfTeams) {
-            this.setState({ isMaxNumberOfTeamsError: true});
+            this.setState({ isMaxNumberOfTeamsError: true });
         }
         else {
-            this.setState({ isMaxNumberOfTeamsError: false});
+            this.setState({ isMaxNumberOfTeamsError: false });
         }
 
         this.setState({ selectedRosters: teams, selectedRostersNum: teams.length });
@@ -1337,12 +1271,12 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
 
     private onTeamsChange = (event: any, itemsData: any) => {
         if (itemsData.value.length > this.state.maxNumberOfTeams) {
-            this.setState({isMaxNumberOfTeamsError: true});
+            this.setState({ isMaxNumberOfTeamsError: true });
         }
         else {
-            this.setState({isMaxNumberOfTeamsError:false});
+            this.setState({ isMaxNumberOfTeamsError: false });
         }
-        
+
         this.setState({
             selectedTeams: itemsData.value,
             selectedTeamsNum: itemsData.value.length,
@@ -1355,10 +1289,10 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
 
     private onRostersChange = (event: any, itemsData: any) => {
         if (itemsData.value.length > this.state.maxNumberOfTeams) {
-            this.setState({isMaxNumberOfTeamsError: true});
+            this.setState({ isMaxNumberOfTeamsError: true });
         }
         else {
-            this.setState({isMaxNumberOfTeamsError:false});
+            this.setState({ isMaxNumberOfTeamsError: false });
         }
 
         this.setState({
@@ -1475,6 +1409,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             rosters: selctedRosters,
             groups: selectedGroups,
             csvusers: selectedCSV,
+            csvfile: this.state.csvfile,
             allUsers: this.state.allUsersOptionSelected,
             isScheduled: this.state.selectedSchedule,
             isImportant: this.state.selectedImportant,
@@ -1484,9 +1419,6 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             channelImage: this.state.channelImage,
             channelTitle: this.state.channelTitle
         };
-
-        let spanner = document.getElementsByClassName("draftingLoader");
-        spanner[0].classList.remove("hiddenLoader");
 
         if (this.state.exists) {
             this.editDraftMessage(draftMessage).then(() => {

@@ -53,6 +53,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Repositories.Extensions
                 Rosters = notification.Rosters,
                 Groups = notification.Groups,
                 CsvUsers = notification.CsvUsers,
+                CsvFile = notification.CsvFile,
                 AllUsers = notification.AllUsers,
                 ScheduledDate = notification.ScheduledDate,
                 Buttons = notification.Buttons,

@@ -119,7 +119,7 @@
   "CardTitle": "訊息分類標題",
   "CardImage": "訊息分類圖示",
   "TargetGroups": "目標群組",
-  "CSVIsTooBig": "檔案太大。 必需小於： "
+  "CSVIsTooBig": "檔案太大。 必需小於： ",
   "ErrorURLMessage": "網址必須以 https:// 為開頭",
   "Support": "支援",
   "Feedback": "意見反應"

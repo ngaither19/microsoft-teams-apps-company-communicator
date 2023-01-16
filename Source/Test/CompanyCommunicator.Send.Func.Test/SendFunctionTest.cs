@@ -46,7 +46,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func.Test
         public void SendFunctionConstructorTest()
         {
             // Arrange
-            Action action1 = () => new SendFunction(null /*options*/, this.notificationService.Object, this.messageService.Object, this.notificationRepo.Object, this.sendQueue.Object, this.localizer.Object,this.memoryCache.Object);
+            Action action1 = () => new SendFunction(null /*options*/, this.notificationService.Object, this.messageService.Object, this.notificationRepo.Object, this.sendQueue.Object, this.localizer.Object, this.memoryCache.Object);
             Action action2 = () => new SendFunction(this.options, null /*notificationService*/, this.messageService.Object, this.notificationRepo.Object, this.sendQueue.Object, this.localizer.Object, this.memoryCache.Object);
             Action action3 = () => new SendFunction(this.options, this.notificationService.Object, null /*messageService*/, this.notificationRepo.Object, this.sendQueue.Object, this.localizer.Object, this.memoryCache.Object);
             Action action4 = () => new SendFunction(this.options, this.notificationService.Object, this.messageService.Object, null /*notificationRepo*/, this.sendQueue.Object, this.localizer.Object, this.memoryCache.Object);
@@ -77,7 +77,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func.Test
             string data = "{\"NotificationId\":\"notificationId\",\"RecipientData\": {\"RecipientId\" : \"TestResp\", \"UserData\": { \"UserId\" : \"userId\",\"ConversationId\":\"conversationId\",\"UserType\":\"Member\"}}}";
             this.notificationService.Setup(x => x.IsPendingNotification(It.IsAny<SendQueueMessageContent>())).ReturnsAsync(false); // Notification is pending
             this.notificationService
-                .Setup(x => x.UpdateSentNotification(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Setup(x => x.UpdateSentNotification(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.CompletedTask);
 
             // Act
@@ -103,7 +103,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func.Test
                 .Setup(x => x.IsPendingNotification(It.IsAny<SendQueueMessageContent>()))
                 .ReturnsAsync(true);
             this.notificationService
-                .Setup(x => x.UpdateSentNotification(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Setup(x => x.UpdateSentNotification(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.CompletedTask);
 
             // Act
@@ -111,7 +111,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func.Test
 
             // Assert
             await task.Should().NotThrowAsync<NullReferenceException>();
-            this.notificationService.Verify(x => x.UpdateSentNotification(It.Is<string>(x => x.Equals("notificationId")), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+            this.notificationService.Verify(x => x.UpdateSentNotification(It.Is<string>(x => x.Equals("notificationId")), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         }
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func.Test
 
             // Assert
             await task.Should().NotThrowAsync();
-            this.notificationService.Verify(x => x.UpdateSentNotification(It.Is<string>(x => x.Equals("notificationId")), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+            this.notificationService.Verify(x => x.UpdateSentNotification(It.Is<string>(x => x.Equals("notificationId")), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         }
 
         /// <summary>
@@ -169,7 +169,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func.Test
                 .Setup(x => x.IsPendingNotification(It.IsAny<SendQueueMessageContent>()))
                 .ReturnsAsync(true);
             this.notificationService
-                .Setup(x => x.UpdateSentNotification(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Setup(x => x.UpdateSentNotification(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.CompletedTask);
 
             // mocking throttled.
@@ -204,7 +204,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func.Test
                 .Setup(x => x.IsPendingNotification(It.IsAny<SendQueueMessageContent>()))
                 .ReturnsAsync(true);
             this.notificationService
-                .Setup(x => x.UpdateSentNotification(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Setup(x => x.UpdateSentNotification(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.CompletedTask);
 
             this.notificationService.Setup(x => x.IsSendNotificationThrottled()).ReturnsAsync(false);
@@ -216,7 +216,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func.Test
             this.notificationRepo.Setup(x => x.GetAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(notificatioData);
             this.notificationRepo.Setup(x => x.GetAdaptiveCardAsync(It.IsAny<string>())).Returns(Task.FromResult(adaptiveCardContent));
             this.messageService.Setup(x => x.SendMessageAsync(It.IsAny<IMessageActivity>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), this.logger.Object)).ReturnsAsync(sendMessageResponse);
-            this.notificationService.Setup(x => x.UpdateSentNotification(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(Task.CompletedTask);
+            this.notificationService.Setup(x => x.UpdateSentNotification(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(Task.CompletedTask);
             
             // Extension methods are static methods and they cannot be mocked using moq. Mocking methods used by the extension instead.
             this.memoryCache.Setup(x => x.CreateEntry(It.IsAny<object>())).Returns(Mock.Of<ICacheEntry>);
@@ -249,7 +249,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func.Test
                 .Setup(x => x.IsPendingNotification(It.IsAny<SendQueueMessageContent>()))
                 .ReturnsAsync(true);
             this.notificationService
-                .Setup(x => x.UpdateSentNotification(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Setup(x => x.UpdateSentNotification(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.CompletedTask);
 
             this.notificationService
@@ -264,7 +264,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func.Test
             this.notificationRepo.Setup(x => x.GetAdaptiveCardAsync(It.IsAny<string>())).Returns(Task.FromResult(adaptiveCardContent));
 
             this.messageService.Setup(x => x.SendMessageAsync(It.IsAny<IMessageActivity>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), this.logger.Object)).ReturnsAsync(sendMessageResponse);
-            this.notificationService.Setup(x => x.UpdateSentNotification(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(Task.CompletedTask);
+            this.notificationService.Setup(x => x.UpdateSentNotification(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(Task.CompletedTask);
 
             // Extension methods are static methods and they cannot be mocked using moq. Mocking methods used by the extension instead.
             this.memoryCache.Setup(x => x.CreateEntry(It.IsAny<object>())).Returns(Mock.Of<ICacheEntry>);
@@ -296,7 +296,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func.Test
                 .Setup(x => x.IsPendingNotification(It.IsAny<SendQueueMessageContent>()))
                 .ReturnsAsync(true);
             this.notificationService
-                .Setup(x => x.UpdateSentNotification(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Setup(x => x.UpdateSentNotification(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.CompletedTask);
 
             // Act

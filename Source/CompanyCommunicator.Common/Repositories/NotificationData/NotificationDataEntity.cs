@@ -173,6 +173,11 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories.Notificat
         public string CsvUsers { get; set; }
 
         /// <summary>
+        /// Gets or sets the CsvFile value.
+        /// </summary>
+        public string CsvFile { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether a notification should be sent to all the
         /// known users - this is equivalent to all of the users stored in the User Data table.
         /// </summary>
@@ -283,6 +288,5 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories.Notificat
         /// Gets or sets a value with the JSON describing the tracking of the buttons clicked.
         /// </summary>
         public string ButtonTrackingClicks { get; set; }
-
     }
 }

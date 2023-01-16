@@ -54,6 +54,7 @@ export interface IMessage {
     reads?: string;
     csvUsers: string;
     buttonTrackingClicks: string;
+    createdBy?: string;
 }
 
 export interface IStatusState {
@@ -144,6 +145,7 @@ class StatusTaskModule extends React.Component<StatusTaskModuleProps, IStatusSta
             response.data.reads = formatNumber(response.data.reads);
             response.data.unknown = response.data.unknown && formatNumber(response.data.unknown);
             response.data.canceled = response.data.canceled && formatNumber(response.data.canceled);
+            response.data.createdBy = response.data.createdBy;
             this.setState({
                 message: response.data
             });
@@ -178,6 +180,10 @@ class StatusTaskModule extends React.Component<StatusTaskModuleProps, IStatusSta
                                         <div className="contentField">
                                             <h3>{this.localize("Completed")}</h3>
                                             <span>{this.state.message.sentDate}</span>
+                                        </div>
+                                        <div className="contentField">
+                                            <h3>{this.localize("Created By")}</h3>
+                                            <span>{this.state.message.createdBy}</span>
                                         </div>
                                         <div className="contentField">
                                             <h3>{this.localize("Duration")}</h3>

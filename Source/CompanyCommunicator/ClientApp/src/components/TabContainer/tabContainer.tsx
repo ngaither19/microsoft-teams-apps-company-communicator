@@ -9,7 +9,7 @@ import ScheduledMessages from '../ScheduledMessages/ScheduledMessages';
 import './tabContainer.scss';
 import * as microsoftTeams from "@microsoft/teams-js";
 import { getBaseUrl } from '../../configVariables';
-import { Accordion, Button, Flex, Label } from '@fluentui/react-northstar';
+import { Accordion, Button, Flex, FlexItem, Tooltip, Label } from '@fluentui/react-northstar';
 import { getDraftMessagesList, getScheduledMessagesList } from '../../actions';
 import { getAppSettings } from "../../apis/messageListApi";
 import { connect } from 'react-redux';
@@ -128,6 +128,13 @@ class TabContainer extends React.Component<ITaskInfoProps, ITabContainerState> {
                 },
             }
         ]
+         const buttonId = 'callout-button';
+         const customHeaderImagePath = process.env.REACT_APP_HEADERIMAGE;
+         const customHeaderText = process.env.REACT_APP_HEADERTEXT == null ? 
+                                    this.localize("CompanyCommunicator") 
+                                        : this.localize(process.env.REACT_APP_HEADERTEXT);
+       
+
         return (
             <Flex className="tabContainer" column fill gap="gap.small">
                 <Flex className="newPostBtn" hAlign="end" vAlign="end" gap="gap.small">

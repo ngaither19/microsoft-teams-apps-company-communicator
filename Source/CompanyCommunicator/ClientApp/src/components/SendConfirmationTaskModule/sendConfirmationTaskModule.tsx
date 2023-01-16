@@ -43,6 +43,7 @@ export interface IMessage {
     channelId?: string,
     channelTitle?: string,
     channelImage?: string,
+    createdBy?: string,
 }
 
 export interface SendConfirmationTaskModuleProps extends RouteComponentProps, WithTranslation {

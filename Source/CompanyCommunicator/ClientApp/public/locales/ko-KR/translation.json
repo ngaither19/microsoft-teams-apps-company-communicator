@@ -85,7 +85,6 @@
   "ExportErrorMessage": "결과를 다시 내보내 보세요. 문제가 지속되면 IT 관리자에게 도움을 요청하세요.",
   "ExportButtonText": "자세한 결과 내보내기",
   "ExportButtonProgressText": "내보내기 진행 중",
-  "ErrorURLMessage": "URL은 https://로 시작해야 합니다.",
   "ErrorImageTooBig": "イメージが大きすぎます!",
   "UploadImage": "アップロード",
   "FutureDateError": "少なくとも 30 分は、今後スケジュールする必要があります。",
@@ -117,4 +116,7 @@
   "ManageGroups": "그룹 관리",
   "GroupAlreadyIncluded": "그룹이 이미 이 채널에 연결되어 있습니다.",
   "CSVIsTooBig": "CSV가 너무 큽습니다. 다음보다 작아야 합니다. "
+  "ErrorURLMessage": "URL은 https://로 시작해야 합니다.",
+  "Support": "지원",
+  "Feedback": "피드백"
 }

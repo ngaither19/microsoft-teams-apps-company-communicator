@@ -18,6 +18,7 @@ import { getBaseUrl } from '../../configVariables';
 import { ImageUtil } from '../../utility/imageutility';
 import { TFunction } from "i18next";
 import { OpenUrlAction } from 'adaptivecards';
+import { Icon, TooltipHost } from 'office-ui-fabric-react';
 
 import axios from '../../apis/axiosJWTDecorator';
 let baseAxiosUrl = getBaseUrl() + '/api';
@@ -74,6 +75,7 @@ export interface formState {
     summary?: string,
     btnLink?: string,
     imageLink?: string,
+    localImagePath?: string,
     btnTitle?: string,
     author: string,
     card?: any,
@@ -153,6 +155,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             author: "",
             btnLink: "",
             imageLink: "",
+            localImagePath:"",
             btnTitle: "",
             card: this.card,
             page: "CardCreation",
@@ -664,6 +667,84 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
 
     public componentWillUnmount() {
         document.removeEventListener("keydown", this.escFunction, false);
+    }
+
+    private handleUploadClick = (event: any) => {
+        if (this.fileInput.current) {
+            this.fileInput.current.click();
+        }
+    }
+
+    private checkValidSizeOfImage = (resizedImageAsBase64: string) => {
+        var stringLength = resizedImageAsBase64.length - 'data:image/png;base64,'.length;
+        var sizeInBytes = 4 * Math.ceil((stringLength / 3))*0.5624896334383812;
+        var sizeInKb = sizeInBytes/1000;
+
+        if(sizeInKb <= 1024)
+            return true
+        
+        else
+            return false;
+    }
+    
+
+    private handleImageSelection = () => {
+        const file = this.fileInput.current.files[0];
+        
+        if(file){
+            const  fileType = file['type'];
+            const { type: mimeType } = file;
+
+            if (!validImageTypes.includes(fileType)) {
+               this.setState({errorImageUrlMessage: this.localize("ErrorImageTypesMessage")});
+               return;
+            }
+            
+            this.setState({localImagePath: file['name']});
+            this.setState({errorImageUrlMessage: ""});
+    
+    
+            const fileReader = new FileReader();
+            fileReader.readAsDataURL(file);
+            fileReader.onload = () => {
+                var image = new Image();
+                image.src = fileReader.result as string;
+                var resizedImageAsBase64 = fileReader.result as string;
+
+                image.onload = function (e: any) {
+                    const MAX_WIDTH = 1024;
+    
+                    if (image.width > MAX_WIDTH) {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = MAX_WIDTH;
+                        canvas.height = ~~(image.height * (MAX_WIDTH / image.width));
+                        const context = canvas.getContext('2d', { alpha: false });
+                        if (!context) {
+                            return;
+                        }
+                        context.drawImage(image, 0, 0, canvas.width, canvas.height);
+                        resizedImageAsBase64 = canvas.toDataURL(mimeType);
+                    }
+                }
+
+                if (!this.checkValidSizeOfImage(resizedImageAsBase64)) {
+                    this.setState({ errorImageUrlMessage: this.localize("ErrorImageSizeMessage") });
+                    return;
+                }
+                
+
+                setCardImageLink(this.card, resizedImageAsBase64);
+                this.updateCard();
+                this.setState({
+                    imageLink: resizedImageAsBase64
+                    });
+            }
+    
+            fileReader.onerror = (error) => {
+                //reject(error);
+            }
+        }
+        
     }
 
     public render(): JSX.Element {
@@ -1403,6 +1484,9 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             channelImage: this.state.channelImage,
             channelTitle: this.state.channelTitle
         };
+
+        let spanner = document.getElementsByClassName("draftingLoader");
+        spanner[0].classList.remove("hiddenLoader");
 
         if (this.state.exists) {
             this.editDraftMessage(draftMessage).then(() => {

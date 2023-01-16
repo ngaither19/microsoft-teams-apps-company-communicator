@@ -34,6 +34,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Services.AdaptiveCard
                 notificationDataEntity.TrackingUrl,
                 notificationDataEntity.ChannelImage,
                 notificationDataEntity.ChannelTitle);
+                notificationDataEntity.Id);
         }
 
         /// <summary>
@@ -49,6 +50,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Services.AdaptiveCard
         /// <param name="trackingurl">The adaptive card read tracking url.</param>
         /// <param name="cardimage">Image for the card when targeting is enabled.</param>
         /// <param name="cardtitle">Title for the card when targeting is enabled.</param>
+        /// <param name="notificationId">The notification id.</param>
         /// <returns>The created adaptive card instance.</returns>
         public AdaptiveCard CreateAdaptiveCard(
             string title,
@@ -61,6 +63,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Services.AdaptiveCard
             string trackingurl,
             string cardimage,
             string cardtitle)
+            string notificationId)
         {
             var version = new AdaptiveSchemaVersion(1, 0);
             AdaptiveCard card = new AdaptiveCard(version);
@@ -102,7 +105,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Services.AdaptiveCard
 
                 card.Body.Add(new AdaptiveImage()
                 {
-                    Url = new Uri(imageUrl, UriKind.RelativeOrAbsolute),
+                    LongUrl = imageUrl,
                     Spacing = AdaptiveSpacing.Default,
                     Size = AdaptiveImageSize.Stretch,
                     AltText = string.Empty,

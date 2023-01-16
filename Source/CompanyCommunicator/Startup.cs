@@ -9,6 +9,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator
 {
     using System;
     using System.Net;
+    using System.Net.Http;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Diagnostics;
     using Microsoft.AspNetCore.Hosting;
@@ -24,6 +25,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator
     using Microsoft.Teams.Apps.CompanyCommunicator.Authentication;
     using Microsoft.Teams.Apps.CompanyCommunicator.Bot;
     using Microsoft.Teams.Apps.CompanyCommunicator.Common.Adapter;
+    using Microsoft.Teams.Apps.CompanyCommunicator.Common.Clients;
     using Microsoft.Teams.Apps.CompanyCommunicator.Common.Extensions;
     using Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories;
     using Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories.ChannelData;
@@ -36,6 +38,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator
     using Microsoft.Teams.Apps.CompanyCommunicator.Common.Secrets;
     using Microsoft.Teams.Apps.CompanyCommunicator.Common.Services;
     using Microsoft.Teams.Apps.CompanyCommunicator.Common.Services.AdaptiveCard;
+    using Microsoft.Teams.Apps.CompanyCommunicator.Common.Services.Blob;
     using Microsoft.Teams.Apps.CompanyCommunicator.Common.Services.CommonBot;
     using Microsoft.Teams.Apps.CompanyCommunicator.Common.Services.MessageQueues.DataQueue;
     using Microsoft.Teams.Apps.CompanyCommunicator.Common.Services.MessageQueues.ExportQueue;
@@ -186,6 +189,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator
             services.AddSingleton<IAppConfigRepository, AppConfigRepository>();
             services.AddSingleton<IGroupAssociationDataRepository, GroupAssociationDataRepository>();
             services.AddSingleton<IChannelDataRepository, ChannelDataRepository>();
+            services.AddSingleton<ISendingNotificationDataRepository, SendingNotificationDataRepository>();
 
             // Add service bus message queues.
             services.AddSingleton<IPrepareToSendQueue, PrepareToSendQueue>();
@@ -200,7 +204,8 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator
 
             // Add microsoft graph services.
             services.AddScoped<IAuthenticationProvider, GraphTokenProvider>();
-            services.AddScoped<IGraphServiceClient, GraphServiceClient>();
+            services.AddScoped<IHttpProvider, HttpProvider>();
+            services.AddScoped<IGraphServiceClient>(sp => new GraphServiceClient(sp.GetService<IAuthenticationProvider>(), sp.GetService<IHttpProvider>()));
             services.AddScoped<IGraphServiceFactory, GraphServiceFactory>();
             services.AddScoped<IGroupsService>(sp => sp.GetRequiredService<IGraphServiceFactory>().GetGroupsService());
             services.AddScoped<IAppCatalogService>(sp => sp.GetRequiredService<IGraphServiceFactory>().GetAppCatalogService());
@@ -215,8 +220,8 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator
             services.AddTransient<IUserDataService, UserDataService>();
             services.AddTransient<ITeamMembersService, TeamMembersService>();
             services.AddTransient<ICCBotFrameworkHttpAdapter, CCBotFrameworkHttpAdapter>();
-
             services.AddTransient<IStorageClientFactory, StorageClientFactory>();
+            services.AddTransient<IBlobStorageProvider, BlobStorageProvider>();
         }
 
         /// <summary>

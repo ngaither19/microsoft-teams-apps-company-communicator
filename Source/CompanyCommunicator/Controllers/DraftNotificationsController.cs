@@ -22,10 +22,12 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Controllers
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Localization;
     using Microsoft.Teams.Apps.CompanyCommunicator.Authentication;
+    using Microsoft.Teams.Apps.CompanyCommunicator.Common;
     using Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories.NotificationData;
     using Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories.TeamData;
     using Microsoft.Teams.Apps.CompanyCommunicator.Common.Resources;
     using Microsoft.Teams.Apps.CompanyCommunicator.Common.Services;
+    using Microsoft.Teams.Apps.CompanyCommunicator.Common.Services.Blob;
     using Microsoft.Teams.Apps.CompanyCommunicator.Common.Services.MicrosoftGraph;
     using Microsoft.Teams.Apps.CompanyCommunicator.DraftNotificationPreview;
     using Microsoft.Teams.Apps.CompanyCommunicator.Models;
@@ -47,6 +49,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Controllers
         private readonly UserAppOptions userAppOptions;
         private readonly IAppSettingsService appSettingsService;
         private readonly IStringLocalizer<Strings> localizer;
+        private readonly IBlobStorageProvider blobStorageProvider;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DraftNotificationsController"/> class.
@@ -76,6 +79,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Controllers
             this.storageClientFactory = storageClientFactory ?? throw new ArgumentNullException(nameof(storageClientFactory));
             this.userAppOptions = userAppOptions?.Value ?? throw new ArgumentNullException(nameof(userAppOptions));
             this.appSettingsService = appSettingsService ?? throw new ArgumentNullException(nameof(appSettingsService));
+            this.blobStorageProvider = blobStorageProvider ?? throw new ArgumentException(nameof(blobStorageProvider));
         }
 
         /// <summary>
@@ -250,6 +254,12 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Controllers
                 TrackingUrl = this.HttpContext.Request.Scheme + "://" + this.HttpContext.Request.Host + "/api/sentNotifications/tracking",
             };
 
+            if (!string.IsNullOrEmpty(notification.ImageLink) && notification.ImageLink.StartsWith(Constants.ImageBase64Format))
+            {
+                notificationEntity.ImageLink = await this.notificationDataRepository.SaveImageAsync(notification.Id, notificationEntity.ImageLink);
+                notificationEntity.ImageBase64BlobName = notification.Id;
+            }
+
             await this.notificationDataRepository.CreateOrUpdateAsync(notificationEntity);
             return this.Ok();
         }
@@ -273,6 +283,11 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Controllers
             if (notificationEntity == null)
             {
                 return this.NotFound();
+            }
+
+            if (!string.IsNullOrWhiteSpace(notificationEntity.ImageBase64BlobName))
+            {
+                await this.blobStorageProvider.DeleteImageBlobAsync(notificationEntity.ImageBase64BlobName);
             }
 
             await this.notificationDataRepository.DeleteAsync(notificationEntity);
@@ -411,6 +426,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Controllers
                 Id = notificationEntity.Id,
                 Title = notificationEntity.Title,
                 ImageLink = notificationEntity.ImageLink,
+                ImageBase64BlobName = notificationEntity.ImageBase64BlobName,
                 Summary = notificationEntity.Summary,
                 Author = notificationEntity.Author,
                 ButtonTitle = notificationEntity.ButtonTitle,
@@ -430,6 +446,12 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Controllers
                 ChannelTitle = notificationEntity.ChannelTitle,
                 ChannelImage = notificationEntity.ChannelImage,
             };
+
+            // In case we have blob name instead of URL to public image.
+            if (!string.IsNullOrEmpty(notificationEntity.ImageBase64BlobName))
+            {
+                result.ImageLink = await this.notificationDataRepository.GetImageAsync(notificationEntity.ImageLink, notificationEntity.ImageBase64BlobName);
+            }
 
             return this.Ok(result);
         }
@@ -506,6 +528,13 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Controllers
             var teamDataEntity = new TeamDataEntity();
             teamDataEntity.TenantId = this.HttpContext.User.FindFirstValue(Common.Constants.ClaimTypeTenantId);
             teamDataEntity.ServiceUrl = await this.appSettingsService.GetServiceUrlAsync();
+
+            // Download base64 data from blob convert to base64 string.
+            if (!string.IsNullOrEmpty(notificationEntity.ImageBase64BlobName))
+            {
+                notificationEntity.ImageLink = await this.notificationDataRepository.GetImageAsync(notificationEntity.ImageLink, notificationEntity.ImageBase64BlobName);
+            }
+
             var result = await this.draftNotificationPreviewService.SendPreview(
                 notificationEntity,
                 teamDataEntity,

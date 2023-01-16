@@ -85,7 +85,6 @@
   "ExportErrorMessage": "Réessayez d’exporter les résultats. Si le problème persiste, contactez votre administrateur informatique pour obtenir de l’aide.",
   "ExportButtonText": "Exporter les résultats détaillés",
   "ExportButtonProgressText": "L’exportation est en cours... Merci de patienter.",
-  "ErrorURLMessage": "L'URL doit commencer par https://",
   "ErrorImageTooBig": "L’image est trop grande!",
   "UploadImage": "Télécharge",
   "FutureDateError": "Vous devez programmer au moins 30 minutes à l’avenir.",
@@ -117,4 +116,7 @@
   "ManageGroups": "Gérer les groupes",
   "GroupAlreadyIncluded": "Le groupe est déjà associé à ce canal.",
   "CSVIsTooBig": "Le fichier CSV est trop grand. Doit être plus petit que : "
+  "ErrorURLMessage": "L'URL doit commencer par https://",
+  "Support": "Support",
+  "Feedback": "Commentaires"
 }

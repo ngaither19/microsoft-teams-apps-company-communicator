@@ -31,6 +31,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Test.Controllers
     using Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories.TeamData;
     using Microsoft.Teams.Apps.CompanyCommunicator.Common.Resources;
     using Microsoft.Teams.Apps.CompanyCommunicator.Common.Services;
+    using Microsoft.Teams.Apps.CompanyCommunicator.Common.Services.Blob;
     using Microsoft.Teams.Apps.CompanyCommunicator.Common.Services.MicrosoftGraph;
     using Microsoft.Teams.Apps.CompanyCommunicator.Controllers;
     using Microsoft.Teams.Apps.CompanyCommunicator.DraftNotificationPreview;
@@ -49,6 +50,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Test.Controllers
         private readonly Mock<IGroupsService> groupsService = new Mock<IGroupsService>();
         private readonly Mock<IAppSettingsService> appSettingsService = new Mock<IAppSettingsService>();
         private readonly Mock<IStringLocalizer<Strings>> localizer = new Mock<IStringLocalizer<Strings>>();
+        private readonly Mock<IBlobStorageProvider> storageProvider = new Mock<IBlobStorageProvider>();
         private readonly string notificationId = "notificationId";
 
         private readonly Mock<IStorageClientFactory> storageClientFactory = new Mock<IStorageClientFactory>();

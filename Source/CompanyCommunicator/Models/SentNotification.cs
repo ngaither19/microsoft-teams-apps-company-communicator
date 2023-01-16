@@ -97,5 +97,10 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Models
         /// Gets or sets CsvUsers .
         /// </summary>
         public string CsvUsers { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value of created by.
+        /// </summary>
+        public string CreatedBy { get; set; }
     }
 }

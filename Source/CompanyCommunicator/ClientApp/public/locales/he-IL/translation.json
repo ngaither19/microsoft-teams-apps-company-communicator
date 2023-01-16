@@ -85,7 +85,6 @@
   "ExportErrorMessage": "נסה שוב לייצא את התוצאות. אם הבעיה נמשכת, פנה למנהל ה-IT לקבלת עזרה.",
   "ExportButtonText": "הצג תוצאות מפורטות",
   "ExportButtonProgressText": "מתבצע ייצוא",
-  "ErrorURLMessage": "כתובת URL חייבת להתחיל ב- https://‏",
   "ErrorImageTooBig": "התמונה גדולה מדי!",
   "UploadImage": "העלה",
   "FutureDateError": "אתה צריך לתזמן לפחות 30 דקות בעתיד.",
@@ -117,4 +116,7 @@
   "ManageGroups": "ניהול קבוצות",
   "GroupAlreadyIncluded": "הקבוצה כבר משויכת לערוץ זה.",
   "CSVIsTooBig": "CSV הוא גדול מדי. צריך להיות קטן יותר מ: "
+  "ErrorURLMessage": "כתובת URL חייבת להתחיל ב- https://‏",
+  "Support": "תמיכה",
+  "Feedback": "משוב"
 }

@@ -20,6 +20,7 @@ type Notification = {
     throttled: number,
     title: string,
     totalMessageCount: number,
+    createdBy: string,
     scheduledDate: string,
 }
 

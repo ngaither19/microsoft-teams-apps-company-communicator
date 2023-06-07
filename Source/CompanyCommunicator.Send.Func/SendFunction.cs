@@ -51,6 +51,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
         private readonly ISendQueue sendQueue;
         private readonly IStringLocalizer<Strings> localizer;
         private readonly IMemoryCache memoryCache;
+        private readonly NotificationDataEntity notiDataEntity;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SendFunction"/> class.
@@ -61,6 +62,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
         /// <param name="notificationRepo">Notification repository.</param>
         /// <param name="sendQueue">The send queue.</param>
         /// <param name="localizer">Localization service.</param>
+        /// <param name="notiDataEntity">NotificationDataEntity.</param>
         public SendFunction(
             IOptions<SendFunctionOptions> options,
             INotificationService notificationService,
@@ -68,7 +70,8 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
             ISendingNotificationDataRepository notificationRepo,
             ISendQueue sendQueue,
             IStringLocalizer<Strings> localizer,
-            IMemoryCache memoryCache)
+            IMemoryCache memoryCache,
+            NotificationDataEntity notiDataEntity)
         {
             if (options is null)
             {
@@ -84,7 +87,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
             this.sendQueue = sendQueue ?? throw new ArgumentNullException(nameof(sendQueue));
             this.localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
             this.memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
-
+            this.notiDataEntity = notiDataEntity;
         }
 
         /// <summary>
@@ -179,7 +182,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
                     messageActivity.Importance = ActivityImportance.High; // flags the importance flag for the message
                 }
 
-                messageActivity.Summary = this.localizer.GetString("SentMessage");
+                messageActivity.Summary = this.notiDataEntity.Title;
 
                 var response = await this.messageService.SendMessageAsync(
                     message: messageActivity,

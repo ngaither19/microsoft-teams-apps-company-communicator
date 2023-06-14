@@ -51,7 +51,6 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
         private readonly ISendQueue sendQueue;
         private readonly IStringLocalizer<Strings> localizer;
         private readonly IMemoryCache memoryCache;
-        private readonly NotificationDataEntity notiDataEntity;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SendFunction"/> class.
@@ -63,7 +62,6 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
         /// <param name="sendQueue">The send queue.</param>
         /// <param name="localizer">Localization service.</param>
         /// <param name="memoryCache">Memory cache.</param>
-        /// <param name="notiDataEntity">NotificationDataEntity.</param>
         public SendFunction(
             IOptions<SendFunctionOptions> options,
             INotificationService notificationService,
@@ -71,8 +69,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
             ISendingNotificationDataRepository notificationRepo,
             ISendQueue sendQueue,
             IStringLocalizer<Strings> localizer,
-            IMemoryCache memoryCache,
-            NotificationDataEntity notiDataEntity)
+            IMemoryCache memoryCache)
         {
             if (options is null)
             {
@@ -88,7 +85,6 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
             this.sendQueue = sendQueue ?? throw new ArgumentNullException(nameof(sendQueue));
             this.localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
             this.memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
-            this.notiDataEntity = notiDataEntity ?? throw new ArgumentNullException(nameof(notiDataEntity));
         }
 
         /// <summary>
@@ -101,6 +97,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
         /// <param name="messageId">The message ID.</param>
         /// <param name="log">The logger.</param>
         /// <param name="context">The execution context.</param>
+        /// <param name="notiDataEntity">NotificationDataEntity.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         [FunctionName("SendMessageFunction")]
         public async Task Run(
@@ -112,7 +109,8 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
             DateTime enqueuedTimeUtc,
             string messageId,
             ILogger log,
-            ExecutionContext context)
+            ExecutionContext context,
+            NotificationDataEntity notiDataEntity)
         {
             log.LogInformation($"C# ServiceBus queue trigger function processed message: {myQueueItem}");
 
@@ -183,8 +181,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
                     messageActivity.Importance = ActivityImportance.High; // flags the importance flag for the message
                 }
 
-                string title = this.notiDataEntity.Title;
-                messageActivity.Summary = title;
+                messageActivity.Summary = notiDataEntity.Title;
 
                 var response = await this.messageService.SendMessageAsync(
                     message: messageActivity,

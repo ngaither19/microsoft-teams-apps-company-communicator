@@ -182,8 +182,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
                     messageActivity.Importance = ActivityImportance.High; // flags the importance flag for the message
                 }
 
-                string title = this.notiDataEntity.Title;
-                messageActivity.Summary = title;
+                messageActivity.Summary = this.notiDataEntity.Title;
 
                 var response = await this.messageService.SendMessageAsync(
                     message: messageActivity,

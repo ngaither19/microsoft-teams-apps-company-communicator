@@ -62,6 +62,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
         /// <param name="notificationRepo">Notification repository.</param>
         /// <param name="sendQueue">The send queue.</param>
         /// <param name="localizer">Localization service.</param>
+        /// <param name="memoryCache">Memory cache.</param>
         /// <param name="notiDataEntity">NotificationDataEntity.</param>
         public SendFunction(
             IOptions<SendFunctionOptions> options,
@@ -87,7 +88,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
             this.sendQueue = sendQueue ?? throw new ArgumentNullException(nameof(sendQueue));
             this.localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
             this.memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
-            this.notiDataEntity = notiDataEntity;
+            this.notiDataEntity = notiDataEntity ?? throw new ArgumentNullException(nameof(notiDataEntity));
         }
 
         /// <summary>
@@ -182,7 +183,8 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
                     messageActivity.Importance = ActivityImportance.High; // flags the importance flag for the message
                 }
 
-                messageActivity.Summary = this.notiDataEntity.Title;
+                string title = this.notiDataEntity.Title;
+                messageActivity.Summary = title;
 
                 var response = await this.messageService.SendMessageAsync(
                     message: messageActivity,

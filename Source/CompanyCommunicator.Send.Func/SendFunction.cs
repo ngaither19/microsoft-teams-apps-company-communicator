@@ -180,7 +180,6 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
                 }
 
                 messageActivity.Summary = "GSD Communicator";
-                messageActivity.Text = "GSD Communicator";
 
                 var response = await this.messageService.SendMessageAsync(
                     message: messageActivity,

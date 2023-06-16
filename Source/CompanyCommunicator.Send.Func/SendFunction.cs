@@ -97,7 +97,6 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
         /// <param name="messageId">The message ID.</param>
         /// <param name="log">The logger.</param>
         /// <param name="context">The execution context.</param>
-        /// <param name="notiDataEntity">NotificationDataEntity.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         [FunctionName("SendMessageFunction")]
         public async Task Run(
@@ -109,8 +108,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
             DateTime enqueuedTimeUtc,
             string messageId,
             ILogger log,
-            ExecutionContext context,
-            NotificationDataEntity notiDataEntity)
+            ExecutionContext context)
         {
             log.LogInformation($"C# ServiceBus queue trigger function processed message: {myQueueItem}");
 
@@ -181,7 +179,8 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
                     messageActivity.Importance = ActivityImportance.High; // flags the importance flag for the message
                 }
 
-                messageActivity.Summary = notiDataEntity.Title;
+                messageActivity.Summary = "GSD Communicator";
+                messageActivity.Text = "GSD Communicator";
 
                 var response = await this.messageService.SendMessageAsync(
                     message: messageActivity,

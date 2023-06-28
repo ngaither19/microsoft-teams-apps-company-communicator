@@ -51,7 +51,6 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
         private readonly ISendQueue sendQueue;
         private readonly IStringLocalizer<Strings> localizer;
         private readonly IMemoryCache memoryCache;
-        private readonly NotificationDataEntity notiDataEntity;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SendFunction"/> class.
@@ -180,9 +179,14 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
                     messageActivity.Importance = ActivityImportance.High; // flags the importance flag for the message
                 }
 
-                var titlepreview = this.notiDataEntity.Title;
+                var jsonAB = await this.notificationRepo.GetAdaptiveCardAsync(messageContent.NotificationId);
+                var adaptiveCardTitle = new Attachment()
+                {
+                    ContentType = AdaptiveCardContentType,
+                    Content = JsonConvert.DeserializeObject(jsonAB),
+                };
 
-                messageActivity.Summary = titlepreview;
+                messageActivity.Summary = adaptiveCardTitle.Name;
 
                 var response = await this.messageService.SendMessageAsync(
                     message: messageActivity,

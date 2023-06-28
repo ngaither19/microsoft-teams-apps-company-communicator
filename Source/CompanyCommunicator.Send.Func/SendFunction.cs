@@ -33,7 +33,6 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
     /// </summary>
     public class SendFunction
     {
-
         /// <summary>
         /// This is set to 10 because the default maximum delivery count from the service bus
         /// message queue before the service bus will automatically put the message in the Dead Letter
@@ -97,6 +96,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
         /// <param name="messageId">The message ID.</param>
         /// <param name="log">The logger.</param>
         /// <param name="context">The execution context.</param>
+        /// <param name="draftNotificationEntity">For title.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         [FunctionName("SendMessageFunction")]
         public async Task Run(
@@ -108,7 +108,8 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
             DateTime enqueuedTimeUtc,
             string messageId,
             ILogger log,
-            ExecutionContext context)
+            ExecutionContext context,
+            NotificationDataEntity draftNotificationEntity)
         {
             log.LogInformation($"C# ServiceBus queue trigger function processed message: {myQueueItem}");
 
@@ -179,14 +180,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
                     messageActivity.Importance = ActivityImportance.High; // flags the importance flag for the message
                 }
 
-                var jsonAB = await this.notificationRepo.GetAdaptiveCardAsync(messageContent.NotificationId);
-                var adaptiveCardTitle = new Attachment()
-                {
-                    ContentType = AdaptiveCardContentType,
-                    Content = JsonConvert.DeserializeObject(jsonAB),
-                };
-
-                messageActivity.Summary = adaptiveCardTitle.Name;
+                messageActivity.Summary = draftNotificationEntity.Title;
 
                 var response = await this.messageService.SendMessageAsync(
                     message: messageActivity,
@@ -311,7 +305,6 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
 
         private string GetButtonTrackingUrl(string notification, string notificationId, string key)
         {
-
             var result = JsonConvert.DeserializeObject<RootSendingAdaptiveCard>(notification);
 
             if (result.actions == null)

@@ -33,7 +33,6 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
     /// </summary>
     public class SendFunction
     {
-
         /// <summary>
         /// This is set to 10 because the default maximum delivery count from the service bus
         /// message queue before the service bus will automatically put the message in the Dead Letter
@@ -51,7 +50,8 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
         private readonly ISendQueue sendQueue;
         private readonly IStringLocalizer<Strings> localizer;
         private readonly IMemoryCache memoryCache;
-        private readonly NotificationDataEntity notiDataEntity;
+
+        private string messagetitle;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SendFunction"/> class.
@@ -62,8 +62,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
         /// <param name="notificationRepo">Notification repository.</param>
         /// <param name="sendQueue">The send queue.</param>
         /// <param name="localizer">Localization service.</param>
-        /// <param name="memoryCache">Memory cache.</param>
-        /// <param name="notiDataEntity">NotificationDataEntity.</param>
+        /// <param name="memoryCache">Memory cache function.</param>
         public SendFunction(
             IOptions<SendFunctionOptions> options,
             INotificationService notificationService,
@@ -71,8 +70,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
             ISendingNotificationDataRepository notificationRepo,
             ISendQueue sendQueue,
             IStringLocalizer<Strings> localizer,
-            IMemoryCache memoryCache,
-            NotificationDataEntity notiDataEntity)
+            IMemoryCache memoryCache)
         {
             if (options is null)
             {
@@ -88,7 +86,6 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
             this.sendQueue = sendQueue ?? throw new ArgumentNullException(nameof(sendQueue));
             this.localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
             this.memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
-            this.notiDataEntity = notiDataEntity ?? throw new ArgumentNullException(nameof(notiDataEntity));
         }
 
         /// <summary>
@@ -117,6 +114,8 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
             log.LogInformation($"C# ServiceBus queue trigger function processed message: {myQueueItem}");
 
             var messageContent = JsonConvert.DeserializeObject<SendQueueMessageContent>(myQueueItem);
+
+            this.messagetitle = this.localizer.GetString("SentMessage");
 
             try
             {
@@ -183,8 +182,9 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
                     messageActivity.Importance = ActivityImportance.High; // flags the importance flag for the message
                 }
 
-                string title = this.notiDataEntity.Title;
-                messageActivity.Summary = title;
+                // Set the message preview text, this version is modified from the original. Here, preview text is set as the title of the adaptive card.
+                messageActivity.Summary = this.messagetitle;
+                // messageActivity.Summary = this.localizer.GetString("SentMessage");
 
                 var response = await this.messageService.SendMessageAsync(
                     message: messageActivity,
@@ -297,7 +297,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
             jsonAC = jsonAC.Replace("[ID]", message.NotificationId);
             jsonAC = jsonAC.Replace("[KEY]", message.RecipientData.RecipientId);
             jsonAC = this.GetButtonTrackingUrl(jsonAC, message.NotificationId, message.RecipientData.RecipientId);
-
+            this.messagetitle = this.GetMessageTitle(jsonAC);
             var adaptiveCardAttachment = new Attachment()
             {
                 ContentType = AdaptiveCardContentType,
@@ -307,9 +307,23 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
             return MessageFactory.Attachment(adaptiveCardAttachment);
         }
 
+        private string GetMessageTitle(string notification)
+        {
+            var result = JsonConvert.DeserializeObject<RootSendingAdaptiveCard>(notification);
+
+            foreach (var item in result.body)
+            {
+                if (item.text != null)
+                {
+                    return item.text;
+                }
+            }
+
+            return string.Empty;
+        }
+
         private string GetButtonTrackingUrl(string notification, string notificationId, string key)
         {
-
             var result = JsonConvert.DeserializeObject<RootSendingAdaptiveCard>(notification);
 
             if (result.actions == null)

@@ -95,8 +95,8 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
         /// <param name="enqueuedTimeUtc">The enqueued time.</param>
         /// <param name="messageId">The message ID.</param>
         /// <param name="log">The logger.</param>
+        /// <param name="message">the message.</param>
         /// <param name="context">The execution context.</param>
-        /// <param name="draftNotificationEntity">For title.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         [FunctionName("SendMessageFunction")]
         public async Task Run(
@@ -108,8 +108,8 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
             DateTime enqueuedTimeUtc,
             string messageId,
             ILogger log,
-            ExecutionContext context,
-            NotificationDataEntity draftNotificationEntity)
+            SendQueueMessageContent message,
+            ExecutionContext context)
         {
             log.LogInformation($"C# ServiceBus queue trigger function processed message: {myQueueItem}");
 
@@ -180,7 +180,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
                     messageActivity.Importance = ActivityImportance.High; // flags the importance flag for the message
                 }
 
-                messageActivity.Summary = draftNotificationEntity.Title;
+                messageActivity.Summary = "new value";
 
                 var response = await this.messageService.SendMessageAsync(
                     message: messageActivity,
@@ -300,7 +300,11 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
                 Content = JsonConvert.DeserializeObject(jsonAC),
             };
 
-            return MessageFactory.Attachment(adaptiveCardAttachment);
+            var message2 = MessageFactory.Attachment(adaptiveCardAttachment);
+            message2.Text = "test";
+            return message2;
+
+            // return MessageFactory.Attachment(adaptiveCardAttachment);
         }
 
         private string GetButtonTrackingUrl(string notification, string notificationId, string key)
